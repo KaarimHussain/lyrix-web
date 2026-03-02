@@ -188,55 +188,30 @@ export default function Navbar() {
                   </Link>
                 </div>
 
-                {/* Right Side: Theme matched Cards */}
-                <div className="w-full md:w-[280px] bg-muted/20 p-5 md:p-6 flex flex-col gap-3 border-l border-border shrink-0">
-                  {/* Light card */}
-                  <div className="bg-card rounded-xl p-4 border border-border shadow-sm">
-                    <h3 className="text-sm font-semibold text-foreground mb-1 leading-tight">
-                      Enterprise needs
-                    </h3>
-                    <p className="text-xs text-muted-foreground mb-3">
-                      Customise your workspace securely.
-                    </p>
-                    <Link
-                      href="/enterprise"
-                      className="text-[11px] font-medium text-foreground hover:text-foreground/80 pb-0.5 inline-block"
-                    >
-                      Explore Enterprise
-                    </Link>
-                  </div>
-                  {/* Primary theme card */}
-                  <div className="bg-primary/95 rounded-xl p-4 text-primary-foreground shadow-sm flex flex-col justify-between border border-primary-foreground/20">
-                    <div>
-                      <h3 className="text-sm font-semibold mb-1">
-                        Loyalty Programme
-                      </h3>
-                      <p className="text-[11px] text-primary-foreground/90">Earn 5% back</p>
+                {/* Right Side: Plugin Marketplace Promo */}
+                <div className="w-full md:w-[280px] bg-muted/20 p-5 md:p-6 flex flex-col shrink-0 border-t md:border-t-0 md:border-l border-border relative overflow-hidden group">
+                  <Link href="/plugins" className="flex-1 block relative z-10 h-full">
+                    {/* Background Accent Glow */}
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-[40px] group-hover:bg-primary/20 transition-colors duration-500 pointer-events-none" />
+
+                    <div className="h-full bg-card rounded-xl p-5 border border-border flex flex-col justify-between shadow-sm transition-all duration-300 group-hover:border-primary/50 group-hover:shadow-[0_0_20px_oklch(0.55_0.12_155_/_0.1)]">
+                      <div>
+                        <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-widest mb-3 border border-primary/20">
+                          <Box className="w-3 h-3" />
+                          <span>Ecosystem</span>
+                        </div>
+                        <h3 className="text-base font-bold text-foreground mb-1.5 leading-tight font-sans">
+                          Plugin Marketplace
+                        </h3>
+                        <p className="text-xs text-muted-foreground leading-relaxed">
+                          Extend Lyrix with community plugins. Auth, analytics, CMS, and more.
+                        </p>
+                      </div>
+                      <div className="text-[11px] font-medium text-foreground group-hover:text-primary mt-4 inline-flex items-center gap-1 transition-colors">
+                        Browse Plugins ↗
+                      </div>
                     </div>
-                    <Link
-                      href="/rewards"
-                      className="text-[11px] font-medium text-primary-foreground hover:text-primary-foreground/80 mt-3 inline-block"
-                    >
-                      Discover Now →
-                    </Link>
-                  </div>
-                  {/* Secondary theme card */}
-                  <div className="bg-secondary rounded-xl p-4 text-secondary-foreground shadow-sm flex-1 flex flex-col justify-between border border-border">
-                    <div>
-                      <h3 className="text-sm font-semibold mb-1">
-                        Promotions return soon
-                      </h3>
-                      <p className="text-[11px] text-secondary-foreground/80 leading-relaxed">
-                        Fair, transparent pricing always.
-                      </p>
-                    </div>
-                    <Link
-                      href="/products"
-                      className="text-[11px] font-medium text-secondary-foreground hover:text-secondary-foreground/80 mt-3 inline-block"
-                    >
-                      Shop products →
-                    </Link>
-                  </div>
+                  </Link>
                 </div>
               </div>
             </NavigationMenuContent>
@@ -462,18 +437,14 @@ export default function Navbar() {
 
           {/* === NORMAL LINKS === */}
           <NavigationMenuItem>
-            <Link href="/docs" passHref>
-              <NavigationMenuLink className="bg-transparent hover:bg-accent group inline-flex h-9 w-max items-center justify-center rounded-md px-3 py-2 text-sm font-medium transition-colors text-muted-foreground hover:text-foreground">
-                Docs
-              </NavigationMenuLink>
+            <Link href="/docs" className="bg-transparent hover:bg-accent group inline-flex h-9 w-max items-center justify-center rounded-md px-3 py-2 text-sm font-medium transition-colors text-foreground">
+              Docs
             </Link>
           </NavigationMenuItem>
 
           <NavigationMenuItem>
-            <Link href="/pricing" passHref>
-              <NavigationMenuLink className="bg-transparent hover:bg-accent group inline-flex h-9 w-max items-center justify-center rounded-md px-3 py-2 text-sm font-medium transition-colors text-muted-foreground hover:text-foreground">
-                Pricing
-              </NavigationMenuLink>
+            <Link href="/pricing" className="bg-transparent hover:bg-accent group inline-flex h-9 w-max items-center justify-center rounded-md px-3 py-2 text-sm font-medium transition-colors text-foreground">
+              Pricing
             </Link>
           </NavigationMenuItem>
         </NavigationMenuList>
@@ -486,12 +457,14 @@ export default function Navbar() {
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/80 backdrop-blur-md">
       <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
         <div className="flex items-center">
-          <Logo
-            height={60}
-            width={60}
-            text="Lyrix"
-            textClassName="text-2xl font-bold"
-          />
+          <Link href="/">
+            <Logo
+              height={60}
+              width={60}
+              text="Lyrix"
+              textClassName="text-2xl font-bold"
+            />
+          </Link>
         </div>
 
         {/* Desktop Navigation */}

@@ -1,10 +1,18 @@
 
 import type { Metadata } from "next";
-import { Inter_Tight } from "next/font/google";
+import { Inter_Tight, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/navbar";
 
-const inter = Inter_Tight({
+const interTight = Inter_Tight({
+  variable: "--font-inter-tight",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
+  style: ["normal", "italic"],
+});
+
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
   subsets: ["latin"],
 });
 
@@ -24,7 +32,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.className} antialiased`}>
+      <body className={`${interTight.variable} ${geistMono.variable} font-sans antialiased`}>
         <Navbar />
         {children}
       </body>
