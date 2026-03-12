@@ -51,7 +51,7 @@ export default function Navbar() {
 
                   {/* Product 1 */}
                   <Link
-                    href="/products/lyrix-ai"
+                    href="/features/lyrix-ai"
                     className="flex items-center gap-3 px-2 py-1 rounded-lg hover:bg-muted group transition-all"
                   >
                     <div className="aspect-square w-15 relative rounded-lg border border-border/50 overflow-hidden bg-muted shadow-sm">
@@ -74,7 +74,7 @@ export default function Navbar() {
 
                   {/* Product 2 */}
                   <Link
-                    href="/products/visual-editor"
+                    href="/features/visual-editor"
                     className="flex items-center gap-3 px-2 py-1 rounded-lg hover:bg-muted group transition-all"
                   >
                     <div className="aspect-square w-15 relative rounded-lg border border-border/50 overflow-hidden bg-muted shadow-sm">
@@ -97,7 +97,7 @@ export default function Navbar() {
 
                   {/* Product 3 */}
                   <Link
-                    href="/products/renderer"
+                    href="/features/renderer"
                     className="flex items-center gap-3 px-2 py-1 rounded-lg hover:bg-muted group transition-all"
                   >
                     <div className="aspect-square w-15 relative rounded-lg border border-border/50 overflow-hidden bg-muted shadow-sm">
@@ -120,7 +120,7 @@ export default function Navbar() {
 
                   {/* Product 4 */}
                   <Link
-                    href="/products/plugin-engine"
+                    href="/features/plugin-engine"
                     className="flex items-center gap-3 px-2 py-1 rounded-lg hover:bg-muted group transition-all"
                   >
                     <div className="aspect-square w-15 relative rounded-lg border border-border/50 overflow-hidden bg-muted shadow-sm">
@@ -143,7 +143,7 @@ export default function Navbar() {
 
                   {/* Product 5 */}
                   <Link
-                    href="/products/team-sync"
+                    href="/features/team-sync"
                     className="flex items-center gap-3 px-2 py-1 rounded-lg hover:bg-muted group transition-all"
                   >
                     <div className="aspect-square w-15 relative rounded-lg border border-border/50 overflow-hidden bg-muted shadow-sm">
@@ -166,7 +166,7 @@ export default function Navbar() {
 
                   {/* Product 6 */}
                   <Link
-                    href="/products/ai-feature"
+                    href="/features/ai-automation"
                     className="flex items-center gap-3 px-2 py-1 rounded-lg hover:bg-muted group transition-all"
                   >
                     <div className="aspect-square w-15 relative rounded-lg border border-border/50 overflow-hidden bg-muted shadow-sm">
@@ -474,8 +474,12 @@ export default function Navbar() {
 
         {/* CTA & Mobile Toggle */}
         <div className="flex items-center gap-3">
-          <Button variant="outline" size="sm" className="hidden sm:inline-flex h-8">Login</Button>
-          <Button size="sm" className="hidden sm:inline-flex h-8">Register</Button>
+          <Link href="/login" passHref>
+            <Button variant="outline" size="sm" className="hidden sm:inline-flex h-8">Login</Button>
+          </Link>
+          <Link href="/register" passHref>
+            <Button size="sm" className="hidden sm:inline-flex h-8">Register</Button>
+          </Link>
           <button
             className="md:hidden p-2 text-muted-foreground hover:text-foreground"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -503,12 +507,12 @@ export default function Navbar() {
               Features
             </h4>
             <div className="grid gap-2 pl-4 border-l border-border">
-              <MobileLink href="/products/lyrix-ai">Lyrix AI</MobileLink>
-              <MobileLink href="/products/visual-editor">Visual Editor</MobileLink>
-              <MobileLink href="/products/renderer">Renderer</MobileLink>
-              <MobileLink href="/products/plugin-engine">Plugin Engine</MobileLink>
-              <MobileLink href="/products/team-sync">Team Sync</MobileLink>
-              <MobileLink href="/products/ai-feature">AI Automation</MobileLink>
+              <MobileLink href="/features/lyrix-ai">Lyrix AI</MobileLink>
+              <MobileLink href="/features/visual-editor">Visual Editor</MobileLink>
+              <MobileLink href="/features/renderer">Renderer</MobileLink>
+              <MobileLink href="/features/plugin-engine">Plugin Engine</MobileLink>
+              <MobileLink href="/features/team-sync">Team Sync</MobileLink>
+              <MobileLink href="/features/ai-automation">AI Automation</MobileLink>
             </div>
           </div>
 

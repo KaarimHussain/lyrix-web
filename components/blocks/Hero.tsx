@@ -52,7 +52,7 @@ export function Hero() {
                         transition={{ duration: 0.5, delay: 0.4 }}
                         className="text-xl md:text-2xl text-muted-foreground max-w-[42rem] font-sans"
                     >
-                        Open-source visual block editor for Next.js. No CMS. No lock-in.
+                        Developer Focused and Friendly CMS for Next.js. No lock-in.
                     </motion.p>
 
                     <div className="flex flex-col items-start gap-6 w-full pt-4">

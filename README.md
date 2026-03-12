@@ -1,8 +1,8 @@
 # Lyrix
 
-**Lyrix** is an open-source, code-first visual block editor for Next.js.
+**Lyrix** is a Developer Focused and Friendly CMS tool where devs can create websites or apps using Lyrix Features.
 
-Instead of configuring content through a traditional CMS, developers define blocks directly in JavaScript or TypeScript. Pages are then composed visually using those blocks, while remaining fully owned, versioned, and rendered inside your Next.js application.
+Unlike other CMS platforms where you fight with abstractions, Lyrix lets you own your content as much as you own your code! You define blocks directly in JavaScript or TypeScript, and pages are composed visually using those blocks, while remaining fully owned, versioned, and rendered inside your Next.js application.
 
 Lyrix is inspired by the idea of Gutenberg, but designed specifically for modern Next.js workflows and developer-first teams.
 
@@ -10,19 +10,19 @@ Lyrix is inspired by the idea of Gutenberg, but designed specifically for modern
 
 ## Why Lyrix?
 
-Most page builders and headless CMS platforms introduce:
+Other CMS platforms introduce:
 - Complex schemas
 - Vendor lock-in
 - Indirection between code and content
-- Difficult local development
+- A nightmare when creating plugins
 
-Lyrix takes a different approach.
+Lyrix takes a different approach, where creating a plugin is as easy as creating a TS or JS Function!
 
 - **Blocks are code**
 - **Pages are data**
 - **Rendering is native to Next.js**
 
-No CMS UI abstractions. No proprietary pipelines.
+A true Developer Friendly CMS. No proprietary pipelines.
 
 ---
 
@@ -48,7 +48,7 @@ Lyrix renders directly inside Next.js:
 
 ## What Lyrix Is Not
 
-- Not a traditional CMS
+- Not a traditional, restrictive CMS
 - Not a low-code website builder
 - Not a hosted platform (by default)
 
@@ -91,9 +91,10 @@ lyrix/
 ```
 ## Philosophy
 
-Lyrix is built around a simple idea:
-> Developers should own their content structure as much as they own their code.
-If you believe page building should feel like programming — not configuration — Lyrix is for you.
+Lyrix is built around a core philosophy:
+> You own your content as much as you own your code!
+
+In other CMS platforms, creating a plugin is a nightmare. In Lyrix, creating a plugin is as easy as creating a TS or JS Function! If you believe a CMS should be developer-focused and friendly, Lyrix is for you.
 
 ## License
 
