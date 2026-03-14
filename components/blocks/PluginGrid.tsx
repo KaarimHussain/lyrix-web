@@ -1,9 +1,9 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { Check, Copy, ShieldCheck, Download, Box, LayoutPanelLeft, Database, Globe, Search, Tag } from "lucide-react";
+import { Check, Copy, ShieldCheck, Download, Box, LayoutPanelLeft, Database, Globe, Tag } from "lucide-react";
 import { useState, useMemo } from "react";
-import { Input } from "@/components/ui/input";
+import LyrixInput from "@/components/LyrixInput";
 
 const plugins = [
     {
@@ -111,17 +111,16 @@ export function PluginGrid() {
                     <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-border pb-6">
                         <div className="w-full md:max-w-md relative">
                             <label htmlFor="plugin-search" className="sr-only">Search Plugins</label>
-                            <div className="relative">
-                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                                <Input 
+                                <LyrixInput 
                                     id="plugin-search"
-                                    type="text" 
+                                    variant="search"
                                     placeholder="Search plugins, packages, or tags..." 
-                                    className="pl-10 h-12 w-full bg-muted/20 border-border focus-visible:ring-primary shadow-sm rounded-xl text-base"
+                                    className="h-12 w-full bg-muted/20 border-border focus-visible:ring-primary shadow-sm rounded-xl text-base"
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
+                                    clearable
+                                    onClear={() => setSearchQuery("")}
                                 />
-                            </div>
                         </div>
                         <div className="text-sm font-medium text-foreground whitespace-nowrap bg-muted/50 px-4 py-2 rounded-lg border border-border">
                             Showing <span className="text-primary font-mono font-bold mx-1">{filteredPlugins.length}</span> Plugins

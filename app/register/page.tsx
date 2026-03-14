@@ -2,8 +2,7 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import LyrixInput from "@/components/LyrixInput";
 import { Separator } from "@/components/ui/separator";
 import { Github, Quote, ShieldCheck } from "lucide-react";
 import Logo from "@/components/logo";
@@ -62,9 +61,9 @@ export default function RegisterPage() {
                         {/* GitHub OAuth Button */}
                         <Button
                             variant="outline"
-                            className="w-full h-11 bg-background hover:bg-muted text-foreground transition-all gap-2 text-sm font-medium shadow-sm"
+                            className="w-full h-11 bg-background hover:bg-muted text-foreground transition-all gap-2 text-sm font-medium border border-border rounded-xl"
                         >
-                            <Github className="w-4 h-4 opacity-70" />
+                            <Github className="w-4 h-4" />
                             Sign up with GitHub
                         </Button>
 
@@ -82,39 +81,32 @@ export default function RegisterPage() {
 
                         {/* Email/Password Form */}
                         <form className="grid gap-4">
-                            <div className="grid gap-2">
-                                <Label htmlFor="name" className="text-foreground">Full Name</Label>
-                                <Input
-                                    id="name"
-                                    type="text"
-                                    placeholder="Jared Palmer"
-                                    className="h-11 bg-background focus-visible:ring-1 focus-visible:ring-primary focus-visible:border-primary transition-all shadow-sm"
-                                    required
-                                />
-                            </div>
+                        <LyrixInput
+                            id="name"
+                            type="text"
+                            label="Full Name"
+                            placeholder="Jared Palmer"
+                            required
+                        />
+
+                        <LyrixInput
+                            id="email"
+                            type="email"
+                            label="Email"
+                            placeholder="developer@lyrix.dev"
+                            required
+                        />
 
                             <div className="grid gap-2">
-                                <Label htmlFor="email" className="text-foreground">Email</Label>
-                                <Input
-                                    id="email"
-                                    type="email"
-                                    placeholder="developer@lyrix.dev"
-                                    className="h-11 bg-background focus-visible:ring-1 focus-visible:ring-primary focus-visible:border-primary transition-all shadow-sm"
-                                    required
-                                />
-                            </div>
-
-                            <div className="grid gap-2">
-                                <Label htmlFor="password" className="text-foreground">Password</Label>
-                                <Input
-                                    id="password"
-                                    type="password"
-                                    placeholder="••••••••"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    className="h-11 bg-background focus-visible:ring-1 focus-visible:ring-primary focus-visible:border-primary transition-all shadow-sm"
-                                    required
-                                />
+                            <LyrixInput
+                                id="password"
+                                variant="password"
+                                label="Password"
+                                placeholder="••••••••"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                required
+                            />
 
                                 {/* CSS-based Password Strength Indicator */}
                                 <div className={`transition-all duration-300 overflow-hidden ${password.length > 0 ? 'h-[28px] opacity-100 mt-1' : 'h-0 opacity-0'}`}>

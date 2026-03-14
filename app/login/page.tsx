@@ -2,8 +2,7 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import LyrixInput from "@/components/LyrixInput";
 import { Separator } from "@/components/ui/separator";
 import { Github, Quote } from "lucide-react";
 import Logo from "@/components/logo";
@@ -114,9 +113,9 @@ export default function LoginPage() {
                     <div className="grid gap-6">
                         <Button
                             variant="outline"
-                            className="w-full h-11 bg-background hover:bg-muted text-foreground transition-all gap-2 text-sm font-medium shadow-sm"
+                            className="w-full h-11 bg-background hover:bg-muted text-foreground transition-all gap-2 text-sm font-medium border border-border rounded-xl"
                         >
-                            <Github className="w-4 h-4 opacity-70" />
+                            <Github className="w-4 h-4" />
                             Continue with GitHub
                         </Button>
 
@@ -132,20 +131,20 @@ export default function LoginPage() {
                         </div>
 
                         <form className="grid gap-5">
-                            <div className="grid gap-2">
-                                <Label htmlFor="email" className="text-foreground">Email</Label>
-                                <Input
-                                    id="email"
-                                    type="email"
-                                    placeholder="developer@lyrix.dev"
-                                    className="h-11 bg-background focus-visible:ring-1 focus-visible:ring-primary focus-visible:border-primary transition-all shadow-sm"
-                                    required
-                                />
-                            </div>
+                        <LyrixInput
+                            id="email"
+                            type="email"
+                            label="Email"
+                            placeholder="developer@lyrix.dev"
+                            required
+                        />
 
-                            <div className="grid gap-2">
-                                <div className="flex items-center justify-between">
-                                    <Label htmlFor="password" className="text-foreground">Password</Label>
+                        <LyrixInput
+                            id="password"
+                            variant="password"
+                            label={
+                                <div className="flex items-center justify-between w-full">
+                                    <span>Password</span>
                                     <Link
                                         href="/forgot-password"
                                         className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
@@ -153,14 +152,10 @@ export default function LoginPage() {
                                         Forgot password?
                                     </Link>
                                 </div>
-                                <Input
-                                    id="password"
-                                    type="password"
-                                    placeholder="••••••••"
-                                    className="h-11 bg-background focus-visible:ring-1 focus-visible:ring-primary focus-visible:border-primary transition-all shadow-sm"
-                                    required
-                                />
-                            </div>
+                            }
+                            placeholder="••••••••"
+                            required
+                        />
 
                             <Button
                                 type="submit"
