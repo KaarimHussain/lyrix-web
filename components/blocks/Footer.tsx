@@ -17,12 +17,12 @@ export function Footer() {
                     <h4 className="text-[11px] font-bold text-white/40 uppercase tracking-widest mb-6 text-center">Products</h4>
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
                         {[
-                            { name: "Lyrix AI", href: "/products/lyrix-ai", color: "from-purple-500/0 via-purple-500/50 to-purple-500/0" },
-                            { name: "Visual Editor", href: "/products/visual-editor", color: "from-blue-500/0 via-blue-500/50 to-blue-500/0" },
-                            { name: "Renderer", href: "/products/renderer", color: "from-green-500/0 via-green-500/50 to-green-500/0" },
-                            { name: "Plugin Engine", href: "/products/plugin-engine", color: "from-orange-500/0 via-orange-500/50 to-orange-500/0" },
-                            { name: "Team Sync", href: "/products/team-sync", color: "from-pink-500/0 via-pink-500/50 to-pink-500/0" },
-                            { name: "AI Automation", href: "/products/ai-feature", color: "from-red-500/0 via-red-500/50 to-red-500/0" },
+                            { name: "Lyrix AI", href: "/features/lyrix-ai", color: "from-purple-500/0 via-purple-500/50 to-purple-500/0" },
+                            { name: "Visual Editor", href: "/features/visual-editor", color: "from-blue-500/0 via-blue-500/50 to-blue-500/0" },
+                            { name: "Renderer", href: "/features/renderer", color: "from-green-500/0 via-green-500/50 to-green-500/0" },
+                            { name: "Plugin Engine", href: "/features/plugin-engine", color: "from-orange-500/0 via-orange-500/50 to-orange-500/0" },
+                            { name: "Team Sync", href: "/features/team-sync", color: "from-pink-500/0 via-pink-500/50 to-pink-500/0" },
+                            { name: "AI Automation", href: "/features/ai-automation", color: "from-red-500/0 via-red-500/50 to-red-500/0" },
                         ].map((product, idx) => (
                             <Link
                                 key={idx}
