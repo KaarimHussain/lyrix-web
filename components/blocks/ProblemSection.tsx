@@ -1,7 +1,45 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { X } from "lucide-react";
+
+const problems = [
+    {
+        tag: "Plugin hell",
+        title: "Need a custom block? Build a plugin.",
+        description:
+            "WordPress forces you into a PHP plugin architecture just to add a simple repeatable section. What should be a component is now a registered post type, a meta box, and 200 lines of boilerplate.",
+    },
+    {
+        tag: "Vendor lock-in",
+        title: "Your content is theirs, not yours.",
+        description:
+            "Schemas live in the database, not in your codebase. Switch CMS and you're migrating everything manually. There's no local dev story, no version control, no git history for content structure.",
+    },
+    {
+        tag: "Dead performance",
+        title: "Every plugin is a performance tax.",
+        description:
+            "A fresh WordPress install with 10 plugins routinely scores sub-60 on PageSpeed. You spend more time optimizing bloat than building features — and the client still asks why the site is slow.",
+    },
+    {
+        tag: "Security nightmares",
+        title: "43% of the web. 90% of the CVEs.",
+        description:
+            "Outdated plugins, exposed wp-admin, SQL injection via poorly written themes — maintaining WordPress in production means babysitting a security checklist indefinitely.",
+    },
+    {
+        tag: "Code disconnect",
+        title: "Your components live in two places.",
+        description:
+            "The frontend is React. The CMS is PHP. The schema is in a MySQL table. Nothing is co-located, nothing is typed, and onboarding a new dev means explaining a system that makes no architectural sense.",
+    },
+    {
+        tag: "Ancient DX",
+        title: "Built in 2003. Feels like it.",
+        description:
+            "No TypeScript, no hot reload, no modern tooling. Gutenberg tried to modernize but layered React on top of a PHP monolith — the worst of both worlds, not the best.",
+    },
+];
 
 export function ProblemSection() {
     return (
@@ -9,7 +47,7 @@ export function ProblemSection() {
             <div className="container-layout">
                 <hr className="border-border mb-16 md:mb-24" />
 
-                <div className="flex flex-col items-start gap-4 mb-16 md:mb-20">
+                <div className="flex flex-col items-start gap-4 mb-6">
                     <motion.p
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
@@ -29,39 +67,37 @@ export function ProblemSection() {
                     >
                         Traditional CMS is a developer nightmare.
                     </motion.h2>
+
+                    <motion.p
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.5, delay: 0.15 }}
+                        className="text-muted-foreground text-base md:text-lg max-w-xl leading-relaxed"
+                    >
+                        You didn't sign up to fight your tools. But here you are — three days deep in a plugin that should've taken an afternoon.
+                    </motion.p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 mb-20 md:mb-24">
-                    {[
-                        {
-                            label: "External State",
-                            description: "Complex schemas that live outside your codebase",
-                        },
-                        {
-                            label: "Closed Ecosystems",
-                            description: "Vendor lock-in with no local dev story",
-                        },
-                        {
-                            label: "Disconnect",
-                            description: "Abstraction layers between your code and content",
-                        }
-                    ].map((item, i) => (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-20 md:mb-24">
+                    {problems.map((item, i) => (
                         <motion.div
                             key={i}
                             initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
-                            transition={{ duration: 0.5, delay: 0.2 + (i * 0.1) }}
-                            className="flex flex-col gap-4 p-6 sm:p-8 rounded-2xl border border-border/40 bg-card/30 hover:bg-card/50 backdrop-blur-md shadow-sm hover:shadow-md hover:border-border/80 transition-all duration-500 group relative overflow-hidden"
+                            transition={{ duration: 0.5, delay: 0.2 + i * 0.08 }}
+                            className="flex flex-col gap-3 p-6 rounded-2xl border border-border/40 bg-card/30 hover:bg-card/50 backdrop-blur-md hover:border-border/80 transition-all duration-500"
                         >
-                            <div className="absolute inset-0 bg-gradient-to-br from-background/0 to-background/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl" />
-                            <div className="relative z-10 flex items-center justify-center w-10 h-10 rounded-full bg-destructive/10 text-destructive/80 mb-2 group-hover:scale-110 group-hover:bg-destructive/20 group-hover:text-destructive transition-all duration-300 ring-1 ring-destructive/20">
-                                <X className="w-5 h-5" />
-                            </div>
-                            <div className="relative z-10 flex flex-col gap-2">
-                                <h3 className="font-semibold text-lg md:text-xl text-foreground tracking-tight">{item.label}</h3>
-                                <p className="text-muted-foreground leading-relaxed text-sm md:text-base">{item.description}</p>
-                            </div>
+                            <span className="text-xs font-medium text-destructive bg-destructive/10 px-3 py-1 rounded-md w-fit">
+                                {item.tag}
+                            </span>
+                            <h3 className="font-semibold text-base md:text-lg text-foreground tracking-tight">
+                                {item.title}
+                            </h3>
+                            <p className="text-muted-foreground text-sm leading-relaxed">
+                                {item.description}
+                            </p>
                         </motion.div>
                     ))}
                 </div>
@@ -70,7 +106,7 @@ export function ProblemSection() {
                     initial={{ opacity: 0, y: 10 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
-                    transition={{ duration: 0.5, delay: 0.6 }}
+                    transition={{ duration: 0.5, delay: 0.7 }}
                     className="flex items-center gap-4"
                 >
                     <div className="h-[1px] w-12 bg-border" />
