@@ -27,7 +27,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           throw new Error("Email and password are required");
         }
 
-        await dbConnect();
+        try {
+          await dbConnect();
+        } catch (connectionError) {
+          console.error("MongoDB Connection Error:", connectionError);
+          throw new Error("Database connection failed. Please try again later.");
+        }
 
         const user = await User.findOne({
           email: (credentials.email as string).toLowerCase(),
