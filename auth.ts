@@ -9,11 +9,14 @@ import authConfig from "@/auth.config";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   secret: process.env.AUTH_SECRET,
+  trustHost: true,
+  debug: process.env.NODE_ENV === "development",
   adapter: MongoDBAdapter(clientPromise),
   ...authConfig,
   providers: [
     ...authConfig.providers,
     Credentials({
+      id: "credentials",
       name: "credentials",
       credentials: {
         email: { label: "Email", type: "email" },
