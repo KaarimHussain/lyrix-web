@@ -8,6 +8,7 @@ import User from "@/models/User";
 import authConfig from "@/auth.config";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
+  secret: process.env.AUTH_SECRET,
   adapter: MongoDBAdapter(clientPromise),
   ...authConfig,
   providers: [
