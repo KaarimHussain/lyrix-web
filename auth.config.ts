@@ -34,7 +34,9 @@ export default {
       const isOnHome = nextUrl.pathname === "/";
       const isOnAuth =
         nextUrl.pathname.startsWith("/login") ||
-        nextUrl.pathname.startsWith("/register");
+        nextUrl.pathname.startsWith("/register") ||
+        nextUrl.pathname.startsWith("/forgot-password") ||
+        nextUrl.pathname.startsWith("/reset-password");
 
       if (isOnDashboard) {
         if (isLoggedIn) return true;
