@@ -1,15 +1,24 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import LyrixInput from "@/components/LyrixInput";
 import { Separator } from "@/components/ui/separator";
-import { Github, Quote, ShieldCheck } from "lucide-react";
+import { Chrome, Quote, ShieldCheck, Loader2 } from "lucide-react";
 import Logo from "@/components/logo";
 import { useState } from "react";
+import { signIn } from "next-auth/react";
 
 export default function RegisterPage() {
+    const router = useRouter();
+    const [name, setName] = useState("");
+    const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [error, setError] = useState("");
+    const [fieldErrors, setFieldErrors] = useState<{ name?: string; email?: string; password?: string }>({});
+    const [isLoading, setIsLoading] = useState(false);
+    const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
     const calculateStrength = (pass: string) => {
         let score = 0;
@@ -28,6 +37,90 @@ export default function RegisterPage() {
         strength <= 1 ? "bg-destructive" :
             strength <= 3 ? "bg-amber-500" :
                 "bg-primary";
+
+    const handleGoogleSignIn = async () => {
+        setIsGoogleLoading(true);
+        setError("");
+        try {
+            await signIn("google", { callbackUrl: "/dashboard" });
+        } catch {
+            setError("Something went wrong with Google sign in");
+            setIsGoogleLoading(false);
+        }
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setError("");
+        setFieldErrors({});
+
+        // Client-side validation
+        const errors: { name?: string; email?: string; password?: string } = {};
+        if (!name.trim()) errors.name = "Name is required";
+        if (!email) errors.email = "Email is required";
+        if (!password) errors.password = "Password is required";
+        else if (password.length < 6) errors.password = "Password must be at least 6 characters";
+
+        if (Object.keys(errors).length > 0) {
+            setFieldErrors(errors);
+            return;
+        }
+
+        setIsLoading(true);
+
+        try {
+            // Step 1: Register the user
+            const res = await fetch("/api/auth/register", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ name: name.trim(), email, password }),
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                // Map known errors to fields
+                if (data.error?.toLowerCase().includes("email")) {
+                    setFieldErrors({ email: data.error });
+                } else if (data.error?.toLowerCase().includes("password")) {
+                    setFieldErrors({ password: data.error });
+                } else if (data.error?.toLowerCase().includes("name")) {
+                    setFieldErrors({ name: data.error });
+                } else {
+                    setError(data.error || "Registration failed");
+                }
+                setIsLoading(false);
+                return;
+            }
+
+            // Step 2: Auto sign-in after successful registration
+            const result = await signIn("credentials", {
+                email,
+                password,
+                redirect: false,
+            });
+
+            if (result?.error) {
+                setError("Account created but sign-in failed. Please log in manually.");
+                setIsLoading(false);
+                return;
+            }
+
+            // Step 3: Send OTP for email verification
+            await fetch("/api/auth/send-otp", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email }),
+            });
+
+            router.push(`/verify-email?email=${encodeURIComponent(email)}`);
+            router.refresh();
+        } catch {
+            setError("Something went wrong. Please try again.");
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     return (
         <div className="w-full lg:grid lg:min-h-screen lg:grid-cols-2 bg-background text-foreground selection:bg-primary/20 selection:text-primary">
@@ -53,18 +146,31 @@ export default function RegisterPage() {
                             Create an account
                         </h1>
                         <p className="text-sm text-muted-foreground">
-                            Join the Next.js visual editor ecosystem
+                            Join the Lyrix visual editor ecosystem
                         </p>
                     </div>
 
+                    {/* General error banner */}
+                    {error && (
+                        <div className="rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive text-center">
+                            {error}
+                        </div>
+                    )}
+
                     <div className="grid gap-6">
-                        {/* GitHub OAuth Button */}
+                        {/* Google OAuth Button */}
                         <Button
                             variant="outline"
                             className="w-full h-11 bg-background hover:bg-muted text-foreground transition-all gap-2 text-sm font-medium border border-border rounded-xl"
+                            onClick={handleGoogleSignIn}
+                            disabled={isGoogleLoading || isLoading}
                         >
-                            <Github className="w-4 h-4" />
-                            Sign up with GitHub
+                            {isGoogleLoading ? (
+                                <Loader2 className="w-4 h-4 animate-spin" />
+                            ) : (
+                                <Chrome className="w-4 h-4" />
+                            )}
+                            Sign up with Google
                         </Button>
 
                         {/* Divider */}
@@ -80,13 +186,20 @@ export default function RegisterPage() {
                         </div>
 
                         {/* Email/Password Form */}
-                        <form className="grid gap-4">
+                        <form className="grid gap-4" onSubmit={handleSubmit}>
                             <LyrixInput
                                 id="name"
                                 type="text"
                                 label="Full Name"
                                 placeholder="Jared Palmer"
                                 required
+                                value={name}
+                                onChange={(e) => {
+                                    setName(e.target.value);
+                                    if (fieldErrors.name) setFieldErrors((p) => ({ ...p, name: undefined }));
+                                }}
+                                error={fieldErrors.name}
+                                disabled={isLoading}
                             />
 
                             <LyrixInput
@@ -95,6 +208,13 @@ export default function RegisterPage() {
                                 label="Email"
                                 placeholder="developer@lyrix.dev"
                                 required
+                                value={email}
+                                onChange={(e) => {
+                                    setEmail(e.target.value);
+                                    if (fieldErrors.email) setFieldErrors((p) => ({ ...p, email: undefined }));
+                                }}
+                                error={fieldErrors.email}
+                                disabled={isLoading}
                             />
 
                             <div className="grid gap-2">
@@ -104,8 +224,13 @@ export default function RegisterPage() {
                                     label="Password"
                                     placeholder="••••••••"
                                     value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
+                                    onChange={(e) => {
+                                        setPassword(e.target.value);
+                                        if (fieldErrors.password) setFieldErrors((p) => ({ ...p, password: undefined }));
+                                    }}
+                                    error={fieldErrors.password}
                                     required
+                                    disabled={isLoading}
                                 />
 
                                 {/* CSS-based Password Strength Indicator */}
@@ -128,8 +253,16 @@ export default function RegisterPage() {
                             <Button
                                 type="submit"
                                 className="w-full h-11 mt-2 bg-primary text-primary-foreground hover:bg-primary/90 transition-all font-medium"
+                                disabled={isLoading || isGoogleLoading}
                             >
-                                Create Account &rarr;
+                                {isLoading ? (
+                                    <>
+                                        <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                                        Creating account…
+                                    </>
+                                ) : (
+                                    <>Create Account &rarr;</>
+                                )}
                             </Button>
                         </form>
                     </div>
@@ -211,7 +344,7 @@ export default function RegisterPage() {
                     </div>
                     <blockquote className="space-y-4">
                         <p className="text-xl md:text-2xl font-medium leading-relaxed font-sans text-foreground/90 tracking-tight">
-                            "Setting up the visual editor took exactly 5 minutes. The plugin engine means we never hit a wall like we did with other headless CMS platforms."
+                            &quot;Setting up the visual editor took exactly 5 minutes. The plugin engine means we never hit a wall like we did with other headless CMS platforms.&quot;
                         </p>
                         <footer className="text-sm">
                             <div className="font-semibold text-foreground">Marcus Chen</div>

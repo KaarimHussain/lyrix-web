@@ -12,11 +12,15 @@ import { Button } from "./ui/button";
 import Link from "next/link";
 import React, { useMemo } from "react";
 import { cn } from "@/lib/utils";
-import { Box, X, Menu } from "lucide-react";
+import { Box, X, Menu, Loader2, LogOut, LayoutDashboard } from "lucide-react";
 import Image from "next/image";
+import { useSession, signOut } from "next-auth/react";
 
 export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
+  const { data: session, status } = useSession();
+  const isLoading = status === "loading";
+  const isAuthenticated = status === "authenticated";
 
   const DesktopNav = useMemo(
     () => (
@@ -151,12 +155,38 @@ export default function Navbar() {
 
         {/* CTA & Mobile Toggle */}
         <div className="flex items-center gap-3">
-          <Link href="/login" passHref>
-            <Button variant="outline" size="sm" className="hidden sm:inline-flex h-8">Login</Button>
-          </Link>
-          <Link href="/register" passHref>
-            <Button size="sm" className="hidden sm:inline-flex h-8">Register</Button>
-          </Link>
+          {isLoading ? (
+            <div className="hidden sm:flex items-center justify-center w-24 h-8">
+              <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+            </div>
+          ) : isAuthenticated ? (
+            <>
+              <Link href="/dashboard" passHref>
+                <Button variant="outline" size="sm" className="hidden sm:inline-flex h-8 gap-2">
+                  <LayoutDashboard className="h-4 w-4" />
+                  Dashboard
+                </Button>
+              </Link>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="hidden sm:inline-flex h-8 text-muted-foreground hover:text-destructive gap-2"
+                onClick={() => signOut({ callbackUrl: "/" })}
+              >
+                <LogOut className="h-4 w-4" />
+                Logout
+              </Button>
+            </>
+          ) : (
+            <>
+              <Link href="/login" passHref>
+                <Button variant="outline" size="sm" className="hidden sm:inline-flex h-8">Login</Button>
+              </Link>
+              <Link href="/register" passHref>
+                <Button size="sm" className="hidden sm:inline-flex h-8">Register</Button>
+              </Link>
+            </>
+          )}
           <button
             className="md:hidden p-2 text-muted-foreground hover:text-foreground"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -191,12 +221,45 @@ export default function Navbar() {
             <Link href="/plugins" className="text-sm font-medium text-muted-foreground hover:text-foreground">Plugins</Link>
             <Link href="/docs" className="text-sm font-medium text-muted-foreground hover:text-foreground">Docs</Link>
             <Link href="/pricing" className="text-sm font-medium text-muted-foreground hover:text-foreground">Pricing</Link>
-            <Link href="/login" className="inline-flex w-full h-10 items-center justify-center rounded-md border border-border px-4 py-2 text-sm font-medium text-foreground hover:bg-accent">
-              Login
-            </Link>
-            <Link href="/register" className="inline-flex w-full h-10 items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90">
-              Get Started
-            </Link>
+            {isAuthenticated ? (
+              <>
+                <Link
+                  href="/dashboard"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="inline-flex w-full h-10 items-center justify-center rounded-md border border-border px-4 py-2 text-sm font-medium text-foreground hover:bg-accent gap-2"
+                >
+                  <LayoutDashboard className="h-4 w-4" />
+                  Dashboard
+                </Link>
+                <button
+                  onClick={() => {
+                    setIsMobileMenuOpen(false);
+                    signOut({ callbackUrl: "/" });
+                  }}
+                  className="inline-flex w-full h-10 items-center justify-center rounded-md bg-destructive/10 text-destructive px-4 py-2 text-sm font-medium hover:bg-destructive/20 gap-2"
+                >
+                  <LogOut className="h-4 w-4" />
+                  Logout
+                </button>
+              </>
+            ) : (
+              <>
+                <Link
+                  href="/login"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="inline-flex w-full h-10 items-center justify-center rounded-md border border-border px-4 py-2 text-sm font-medium text-foreground hover:bg-accent"
+                >
+                  Login
+                </Link>
+                <Link
+                  href="/register"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="inline-flex w-full h-10 items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+                >
+                  Get Started
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </div>

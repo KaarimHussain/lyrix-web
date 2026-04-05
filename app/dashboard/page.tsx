@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useSession, signOut } from "next-auth/react";
 import {
     Plus,
     Globe,
@@ -17,18 +18,13 @@ import {
     ChevronRight,
     Activity,
     Layers,
+    LogOut,
+    Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Logo from "@/components/logo";
 
 // ─── Mock Data ───────────────────────────────────────────────────────────────
-
-const user = {
-    name: "Kaarim Hussain",
-    email: "kaarim@lyrix.dev",
-    plan: "Community",
-    avatar: "KH",
-};
 
 const projects = [
     {
@@ -81,7 +77,7 @@ const recentActivity = [
 
 // ─── Sidebar ─────────────────────────────────────────────────────────────────
 
-function Sidebar() {
+function Sidebar({ user }: { user: any }) {
     return (
         <aside className="hidden md:flex flex-col w-[220px] shrink-0 border-r border-border bg-background h-screen sticky top-0">
             {/* Logo */}
@@ -98,7 +94,7 @@ function Sidebar() {
             </nav>
 
             {/* User */}
-            <div className="border-t border-border p-4">
+            <div className="border-t border-border p-4 flex flex-col gap-3">
                 <div className="flex items-center gap-3">
                     <div className="w-8 h-8 rounded-full bg-primary/20 text-primary flex items-center justify-center text-xs font-bold shrink-0">
                         {user.avatar}
@@ -108,6 +104,13 @@ function Sidebar() {
                         <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider">{user.plan}</span>
                     </div>
                 </div>
+                <button
+                    onClick={() => signOut({ callbackUrl: "/login" })}
+                    className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors w-full"
+                >
+                    <LogOut className="w-4 h-4" />
+                    Sign out
+                </button>
             </div>
         </aside>
     );
@@ -202,7 +205,23 @@ function ProjectCard({ project }: { project: (typeof projects)[0] }) {
 // ─── Dashboard Page ───────────────────────────────────────────────────────────
 
 export default function DashboardPage() {
+    const { data: session, status } = useSession();
     const [search, setSearch] = useState("");
+
+    if (status === "loading") {
+        return (
+            <div className="flex min-h-screen items-center justify-center bg-background">
+                <Loader2 className="w-8 h-8 animate-spin text-primary" />
+            </div>
+        );
+    }
+
+    const user = {
+        name: session?.user?.name || "User",
+        email: session?.user?.email || "",
+        plan: "Community",
+        avatar: session?.user?.name ? session.user.name.split(" ").map((n: string) => n[0]).join("").toUpperCase() : "U",
+    };
 
     const filtered = projects.filter((p) =>
         p.name.toLowerCase().includes(search.toLowerCase())
@@ -210,7 +229,7 @@ export default function DashboardPage() {
 
     return (
         <div className="flex min-h-screen bg-background text-foreground">
-            <Sidebar />
+            <Sidebar user={user} />
 
             {/* Main */}
             <div className="flex-1 flex flex-col min-w-0">
@@ -236,7 +255,7 @@ export default function DashboardPage() {
                             Good morning, {user.name.split(" ")[0]} 👋
                         </h2>
                         <p className="text-sm text-muted-foreground">
-                            You have {projects.length} projects. {projects.filter(p => p.status === "live").length} are live.
+                            You have {projects.length} projects. {projects.filter((p: any) => p.status === "live").length} are live.
                         </p>
                     </div>
 
@@ -244,9 +263,9 @@ export default function DashboardPage() {
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                         {[
                             { label: "Total Projects", value: projects.length, icon: Layers },
-                            { label: "Live Sites", value: projects.filter(p => p.status === "live").length, icon: Zap },
-                            { label: "Total Blocks", value: projects.reduce((a, p) => a + p.blocks, 0), icon: Blocks },
-                            { label: "Total Pages", value: projects.reduce((a, p) => a + p.pages, 0), icon: FileJson },
+                            { label: "Live Sites", value: projects.filter((p: any) => p.status === "live").length, icon: Zap },
+                            { label: "Total Blocks", value: projects.reduce((a: number, p: any) => a + p.blocks, 0), icon: Blocks },
+                            { label: "Total Pages", value: projects.reduce((a: number, p: any) => a + p.pages, 0), icon: FileJson },
                         ].map((stat) => (
                             <div key={stat.label} className="flex flex-col gap-3 p-4 rounded-xl bg-card border border-border">
                                 <div className="flex items-center justify-between">

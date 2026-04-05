@@ -1,13 +1,86 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { signIn } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import LyrixInput from "@/components/LyrixInput";
 import { Separator } from "@/components/ui/separator";
-import { Github, Quote } from "lucide-react";
+import { Chrome, Quote, Loader2 } from "lucide-react";
 import Logo from "@/components/logo";
 
 export default function LoginPage() {
+    const router = useRouter();
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [error, setError] = useState("");
+    const [fieldErrors, setFieldErrors] = useState<{ email?: string; password?: string }>({});
+    const [isLoading, setIsLoading] = useState(false);
+    const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+
+    const handleGoogleSignIn = async () => {
+        setIsGoogleLoading(true);
+        setError("");
+        try {
+            await signIn("google", { callbackUrl: "/dashboard" });
+        } catch {
+            setError("Something went wrong with Google sign in");
+            setIsGoogleLoading(false);
+        }
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setError("");
+        setFieldErrors({});
+
+        // Client-side validation
+        const errors: { email?: string; password?: string } = {};
+        if (!email) errors.email = "Email is required";
+        if (!password) errors.password = "Password is required";
+
+        if (Object.keys(errors).length > 0) {
+            setFieldErrors(errors);
+            return;
+        }
+
+        setIsLoading(true);
+
+        try {
+            const result = await signIn("credentials", {
+                email,
+                password,
+                redirect: false,
+            });
+
+            if (result?.error) {
+                // NextAuth wraps the error message
+                const errorMessage = result.error === "CredentialsSignin"
+                    ? "Invalid email or password"
+                    : result.error;
+
+                // Show targeted field errors for known messages
+                if (errorMessage.includes("Google")) {
+                    setFieldErrors({ email: "Use Google to sign in" });
+                } else if (errorMessage.includes("No account")) {
+                    setFieldErrors({ email: errorMessage });
+                } else if (errorMessage.includes("password")) {
+                    setFieldErrors({ password: errorMessage });
+                } else {
+                    setError(errorMessage);
+                }
+            } else {
+                router.push("/dashboard");
+                router.refresh();
+            }
+        } catch {
+            setError("Something went wrong. Please try again.");
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     return (
         <div className="w-full lg:grid lg:min-h-screen lg:grid-cols-2 bg-background text-foreground selection:bg-primary/20 selection:text-primary">
 
@@ -78,7 +151,7 @@ export default function LoginPage() {
                     </div>
                     <blockquote className="space-y-4">
                         <p className="text-xl md:text-2xl font-medium leading-relaxed font-sans text-foreground/90 tracking-tight">
-                            "Lyrix treats content as code. No more fighting with WYSIWYG editors or proprietary plugins. If you can build a React component, you can build a CMS block."
+                            &quot;Lyrix treats content as code. No more fighting with WYSIWYG editors or proprietary plugins. If you can build a React component, you can build a CMS block.&quot;
                         </p>
                         <footer className="text-sm">
                             <div className="font-semibold text-foreground">Sophia Reynolds</div>
@@ -110,13 +183,26 @@ export default function LoginPage() {
                         </p>
                     </div>
 
+                    {/* General error banner */}
+                    {error && (
+                        <div className="rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive text-center">
+                            {error}
+                        </div>
+                    )}
+
                     <div className="grid gap-6">
                         <Button
                             variant="outline"
                             className="w-full h-11 bg-background hover:bg-muted text-foreground transition-all gap-2 text-sm font-medium border border-border rounded-xl"
+                            onClick={handleGoogleSignIn}
+                            disabled={isGoogleLoading || isLoading}
                         >
-                            <Github className="w-4 h-4" />
-                            Continue with GitHub
+                            {isGoogleLoading ? (
+                                <Loader2 className="w-4 h-4 animate-spin" />
+                            ) : (
+                                <Chrome className="w-4 h-4" />
+                            )}
+                            Continue with Google
                         </Button>
 
                         <div className="relative">
@@ -130,44 +216,66 @@ export default function LoginPage() {
                             </div>
                         </div>
 
-                        <form className="grid gap-5">
-                        <LyrixInput
-                            id="email"
-                            type="email"
-                            label="Email"
-                            placeholder="developer@lyrix.dev"
-                            required
-                        />
+                        <form className="grid gap-5" onSubmit={handleSubmit}>
+                            <LyrixInput
+                                id="email"
+                                type="email"
+                                label="Email"
+                                placeholder="developer@lyrix.dev"
+                                required
+                                value={email}
+                                onChange={(e) => {
+                                    setEmail(e.target.value);
+                                    if (fieldErrors.email) setFieldErrors((p) => ({ ...p, email: undefined }));
+                                }}
+                                error={fieldErrors.email}
+                                disabled={isLoading}
+                            />
 
-                        <LyrixInput
-                            id="password"
-                            variant="password"
-                            label={
-                                <div className="flex items-center justify-between w-full">
-                                    <span>Password</span>
-                                    <Link
-                                        href="/forgot-password"
-                                        className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
-                                    >
-                                        Forgot password?
-                                    </Link>
-                                </div>
-                            }
-                            placeholder="••••••••"
-                            required
-                        />
+                            <LyrixInput
+                                id="password"
+                                variant="password"
+                                label={
+                                    <div className="flex items-center justify-between w-full">
+                                        <span>Password</span>
+                                        <Link
+                                            href="/forgot-password"
+                                            className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
+                                        >
+                                            Forgot password?
+                                        </Link>
+                                    </div>
+                                }
+                                placeholder="••••••••"
+                                required
+                                value={password}
+                                onChange={(e) => {
+                                    setPassword(e.target.value);
+                                    if (fieldErrors.password) setFieldErrors((p) => ({ ...p, password: undefined }));
+                                }}
+                                error={fieldErrors.password}
+                                disabled={isLoading}
+                            />
 
                             <Button
                                 type="submit"
                                 className="w-full h-11 mt-2 bg-primary text-primary-foreground hover:bg-primary/90 transition-all font-medium"
+                                disabled={isLoading || isGoogleLoading}
                             >
-                                Sign In &rarr;
+                                {isLoading ? (
+                                    <>
+                                        <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                                        Signing in…
+                                    </>
+                                ) : (
+                                    <>Sign In &rarr;</>
+                                )}
                             </Button>
                         </form>
                     </div>
 
                     <div className="text-center text-sm text-muted-foreground mt-4">
-                        Don't have an account?{" "}
+                        Don&apos;t have an account?{" "}
                         <Link href="/register" className="text-foreground hover:text-primary font-medium transition-colors underline underline-offset-4 decoration-border hover:decoration-primary">
                             Sign up
                         </Link>

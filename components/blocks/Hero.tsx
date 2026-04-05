@@ -62,11 +62,11 @@ export function Hero() {
                             transition={{ duration: 0.5, delay: 0.5 }}
                             className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto"
                         >
-                            {/* <Link> */}
-                            <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground font-sans px-8 h-12 text-base">
-                                Get Started
-                            </Button>
-                            {/* </Link> */}
+                            <Link href="/register">
+                                <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground font-sans px-8 h-12 text-base">
+                                    Get Started
+                                </Button>
+                            </Link>
                             <Link href="https://github.com/KaarimHussain/Lyrix">
                                 <Button size="lg" variant="outline" className="font-sans px-8 h-12 text-base border-border hover:bg-accent/50 bg-background/50 backdrop-blur-sm w-full">
                                     Star on GitHub ↗
