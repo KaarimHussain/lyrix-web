@@ -10,7 +10,7 @@ import {
 } from "./ui/navigation-menu";
 import { Button } from "./ui/button";
 import Link from "next/link";
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
 import { Box, X, Menu, Loader2, LogOut, LayoutDashboard } from "lucide-react";
 import Image from "next/image";
@@ -40,7 +40,7 @@ export default function Navbar() {
                   </div>
                   <Link href="/features/lyrix-ai" className="flex items-center gap-3 px-2 py-1 rounded-lg hover:bg-muted group transition-all">
                     <div className="aspect-square w-15 relative rounded-lg border border-border/50 overflow-hidden bg-muted shadow-sm">
-                      <Image src="/images/navbar/Lyrix-AI.png" alt="Lyrix AI" fill className="object-cover" />
+                      <NavItemImage src="https://cdn.echelonindustries.net/cdn/images/1f9124b3f8806740_1775521597.png" alt="Lyrix AI" />
                     </div>
                     <div className="flex flex-col">
                       <div className="text-xl font-semibold text-foreground leading-tight mb-0.5 group-hover:text-primary transition-colors">Lyrix AI</div>
@@ -49,7 +49,7 @@ export default function Navbar() {
                   </Link>
                   <Link href="/features/visual-editor" className="flex items-center gap-3 px-2 py-1 rounded-lg hover:bg-muted group transition-all">
                     <div className="aspect-square w-15 relative rounded-lg border border-border/50 overflow-hidden bg-muted shadow-sm">
-                      <Image src="/images/navbar/Visual-Editor.png" alt="Visual Editor" fill className="object-cover" />
+                      <NavItemImage src="https://cdn.echelonindustries.net/cdn/images/27657da2053fc161_1775521568.png" alt="Visual Editor" />
                     </div>
                     <div className="flex flex-col">
                       <div className="text-xl font-semibold text-foreground leading-tight mb-0.5 group-hover:text-primary transition-colors">Visual Editor</div>
@@ -58,7 +58,7 @@ export default function Navbar() {
                   </Link>
                   <Link href="/features/renderer" className="flex items-center gap-3 px-2 py-1 rounded-lg hover:bg-muted group transition-all">
                     <div className="aspect-square w-15 relative rounded-lg border border-border/50 overflow-hidden bg-muted shadow-sm">
-                      <Image src="/images/navbar/Renderer.png" alt="Renderer" fill className="object-cover" />
+                      <NavItemImage src="https://cdn.echelonindustries.net/cdn/images/4e62d36d6308f170_1775521580.png" alt="Renderer" />
                     </div>
                     <div className="flex flex-col">
                       <div className="text-xl font-semibold text-foreground leading-tight mb-0.5 group-hover:text-primary transition-colors">Renderer</div>
@@ -67,7 +67,7 @@ export default function Navbar() {
                   </Link>
                   <Link href="/features/plugin-engine" className="flex items-center gap-3 px-2 py-1 rounded-lg hover:bg-muted group transition-all">
                     <div className="aspect-square w-15 relative rounded-lg border border-border/50 overflow-hidden bg-muted shadow-sm">
-                      <Image src="/images/navbar/Plugin-Engine.png" alt="Plugin Engine" fill className="object-cover" />
+                      <NavItemImage src="https://cdn.echelonindustries.net/cdn/images/d520ae46a90cc872_1775521588.png" alt="Plugin Engine" />
                     </div>
                     <div className="flex flex-col">
                       <div className="text-xl font-semibold text-foreground leading-tight mb-0.5 group-hover:text-primary transition-colors">Plugin Engine</div>
@@ -76,7 +76,7 @@ export default function Navbar() {
                   </Link>
                   <Link href="/features/team-sync" className="flex items-center gap-3 px-2 py-1 rounded-lg hover:bg-muted group transition-all">
                     <div className="aspect-square w-15 relative rounded-lg border border-border/50 overflow-hidden bg-muted shadow-sm">
-                      <Image src="/images/navbar/Team-Sync.png" alt="Team Sync" fill className="object-cover" />
+                      <NavItemImage src="https://cdn.echelonindustries.net/cdn/images/8e60a31e12b700ae_1775521520.png" alt="Team Sync" />
                     </div>
                     <div className="flex flex-col">
                       <div className="text-xl font-semibold text-foreground leading-tight mb-0.5 group-hover:text-primary transition-colors">Team Sync</div>
@@ -85,7 +85,7 @@ export default function Navbar() {
                   </Link>
                   <Link href="/features/ai-automation" className="flex items-center gap-3 px-2 py-1 rounded-lg hover:bg-muted group transition-all">
                     <div className="aspect-square w-15 relative rounded-lg border border-border/50 overflow-hidden bg-muted shadow-sm">
-                      <Image src="/images/navbar/AI-Feature.png" alt="AI Automation" fill className="object-cover" />
+                      <NavItemImage src="https://cdn.echelonindustries.net/cdn/images/0e730cb402b95a86_1775521606.png" alt="AI Automation" />
                     </div>
                     <div className="flex flex-col">
                       <div className="text-xl font-semibold text-foreground leading-tight mb-0.5 group-hover:text-primary transition-colors">AI Automation</div>
@@ -206,14 +206,13 @@ export default function Navbar() {
       >
         <div className="relative z-20 grid gap-6 rounded-md p-4 text-foreground">
           <div className="grid gap-4">
-            <h4 className="font-medium leading-none text-foreground">Features</h4>
-            <div className="grid gap-2 pl-4 border-l border-border">
-              <MobileLink href="/features/lyrix-ai">Lyrix AI</MobileLink>
-              <MobileLink href="/features/visual-editor">Visual Editor</MobileLink>
-              <MobileLink href="/features/renderer">Renderer</MobileLink>
-              <MobileLink href="/features/plugin-engine">Plugin Engine</MobileLink>
-              <MobileLink href="/features/team-sync">Team Sync</MobileLink>
-              <MobileLink href="/features/ai-automation">AI Automation</MobileLink>
+            <h4 className="font-medium leading-none text-foreground">Features</h4>            <div className="grid gap-2 pl-4 border-l border-border">
+              <MobileLink href="/features/lyrix-ai" icon="https://cdn.echelonindustries.net/cdn/images/1f9124b3f8806740_1775521597.png"> Lyrix AI </MobileLink>
+              <MobileLink href="/features/visual-editor" icon="https://cdn.echelonindustries.net/cdn/images/27657da2053fc161_1775521568.png"> Visual Editor </MobileLink>
+              <MobileLink href="/features/renderer" icon="https://cdn.echelonindustries.net/cdn/images/4e62d36d6308f170_1775521580.png"> Renderer </MobileLink>
+              <MobileLink href="/features/plugin-engine" icon="https://cdn.echelonindustries.net/cdn/images/d520ae46a90cc872_1775521588.png"> Plugin Engine </MobileLink>
+              <MobileLink href="/features/team-sync" icon="https://cdn.echelonindustries.net/cdn/images/8e60a31e12b700ae_1775521520.png"> Team Sync </MobileLink>
+              <MobileLink href="/features/ai-automation" icon="https://cdn.echelonindustries.net/cdn/images/0e730cb402b95a86_1775521606.png"> AI Automation </MobileLink>
             </div>
           </div>
 
@@ -263,12 +262,62 @@ export default function Navbar() {
           </div>
         </div>
       </div>
+
+      {/* Optimized Image Preloading to ensure they only load once */}
+      <div className="hidden pointer-events-none" aria-hidden="true">
+        {NAV_FEATURE_IMAGES.map((src) => (
+          <Image key={src} src={src} alt="preload" width={40} height={40} priority />
+        ))}
+      </div>
     </header>
   );
 }
 
-const MobileLink = ({ href, children }: { href: string; children: React.ReactNode }) => (
-  <Link href={href} className="text-sm text-muted-foreground hover:text-foreground py-1 transition-colors">
+const NAV_FEATURE_IMAGES = [
+  "https://cdn.echelonindustries.net/cdn/images/1f9124b3f8806740_1775521597.png",
+  "https://cdn.echelonindustries.net/cdn/images/27657da2053fc161_1775521568.png",
+  "https://cdn.echelonindustries.net/cdn/images/4e62d36d6308f170_1775521580.png",
+  "https://cdn.echelonindustries.net/cdn/images/d520ae46a90cc872_1775521588.png",
+  "https://cdn.echelonindustries.net/cdn/images/8e60a31e12b700ae_1775521520.png",
+  "https://cdn.echelonindustries.net/cdn/images/0e730cb402b95a86_1775521606.png",
+];
+
+const NavItemImage = ({ src, alt }: { src: string; alt: string }) => {
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  return (
+    <div className="relative w-full h-full bg-muted/40 overflow-hidden">
+      {/* Really light blur color of that image placeholder */}
+      {!isLoaded && (
+        <div
+          className="absolute inset-0 animate-pulse bg-primary/5 transition-opacity duration-500"
+          style={{
+            backdropFilter: "blur(12px)",
+            WebkitBackdropFilter: "blur(12px)",
+          }}
+        />
+      )}
+      <Image
+        src={src}
+        alt={alt}
+        fill
+        onLoadingComplete={() => setIsLoaded(true)}
+        className={cn(
+          "object-cover transition-all duration-700 ease-out",
+          isLoaded ? "opacity-100 blur-0 scale-100" : "opacity-0 blur-xl scale-110"
+        )}
+      />
+    </div>
+  );
+};
+
+const MobileLink = ({ href, children, icon }: { href: string; children: React.ReactNode; icon?: string }) => (
+  <Link href={href} className="flex items-center gap-3 text-sm text-muted-foreground hover:text-foreground py-2 transition-colors">
+    {icon && (
+      <div className="w-8 h-8 relative rounded-md border border-border/50 overflow-hidden shrink-0 bg-muted/30">
+        <NavItemImage src={icon} alt={String(children)} />
+      </div>
+    )}
     {children}
   </Link>
 );
