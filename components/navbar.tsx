@@ -274,12 +274,12 @@ export default function Navbar() {
 }
 
 const NAV_FEATURE_IMAGES = [
-  "https://cdn.echelonindustries.net/cdn/images/1f9124b3f8806740_1775521597.png",
-  "https://cdn.echelonindustries.net/cdn/images/27657da2053fc161_1775521568.png",
-  "https://cdn.echelonindustries.net/cdn/images/4e62d36d6308f170_1775521580.png",
-  "https://cdn.echelonindustries.net/cdn/images/d520ae46a90cc872_1775521588.png",
-  "https://cdn.echelonindustries.net/cdn/images/8e60a31e12b700ae_1775521520.png",
-  "https://cdn.echelonindustries.net/cdn/images/0e730cb402b95a86_1775521606.png",
+  "https://cdn.echelonindustries.net/cdn/images/9549e6444bfbb3c4_1775522484.png",
+  "https://cdn.echelonindustries.net/cdn/images/3af09f5dbfa64465_1775522443.png",
+  "https://cdn.echelonindustries.net/cdn/images/500da37736d225cc_1775522463.png",
+  "https://cdn.echelonindustries.net/cdn/images/9aa5c2261c3499ee_1775522474.png",
+  "https://cdn.echelonindustries.net/cdn/images/d5f4545a12497662_1775522451.png",
+  "https://cdn.echelonindustries.net/cdn/images/0fdfa7f52c7354b4_1775522493.png",
 ];
 
 const NavItemImage = ({ src, alt }: { src: string; alt: string }) => {
