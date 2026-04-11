@@ -22,6 +22,45 @@ export default function Navbar() {
   const isLoading = status === "loading";
   const isAuthenticated = status === "authenticated";
 
+  const NAV_FEATURE_IMAGES = [
+    {
+      imgSrc: "https://cdn.echelonindustries.net/cdn/images/9549e6444bfbb3c4_1775522484.png",
+      alt: "Lyrix AI",
+      description: "Intelligent content generation.",
+      href: "/features/lyrix-ai",
+    },
+    {
+      imgSrc: "https://cdn.echelonindustries.net/cdn/images/3af09f5dbfa64465_1775522443.png",
+      alt: "Visual Editor",
+      description: "Drag & drop interface.",
+      href: "/features/visual-editor",
+    },
+    {
+      imgSrc: "https://cdn.echelonindustries.net/cdn/images/500da37736d225cc_1775522463.png",
+      alt: "Renderer",
+      description: "High-performance delivery.",
+      href: "/features/renderer",
+    },
+    {
+      imgSrc: "https://cdn.echelonindustries.net/cdn/images/9aa5c2261c3499ee_1775522474.png",
+      alt: "Plugin Engine",
+      description: "Extend anytime anywhere.",
+      href: "/features/plugin-engine",
+    },
+    {
+      imgSrc: "https://cdn.echelonindustries.net/cdn/images/d5f4545a12497662_1775522451.png",
+      alt: "Team Sync",
+      description: "Collaborate in real time.",
+      href: "/features/team-sync",
+    },
+    {
+      imgSrc: "https://cdn.echelonindustries.net/cdn/images/0fdfa7f52c7354b4_1775522493.png",
+      alt: "AI Automation",
+      description: "Next-gen workflows.",
+      href: "/features/ai-automation",
+    },
+  ];
+
   const DesktopNav = useMemo(
     () => (
       <NavigationMenu>
@@ -38,60 +77,17 @@ export default function Navbar() {
                   <div className="col-span-1 sm:col-span-2 mb-2 text-[11px] font-bold text-muted-foreground uppercase tracking-widest px-2">
                     Shop all products
                   </div>
-                  <Link href="/features/lyrix-ai" className="flex items-center gap-3 px-2 py-1 rounded-lg hover:bg-muted group transition-all">
-                    <div className="aspect-square w-15 relative rounded-lg border border-border/50 overflow-hidden bg-muted shadow-sm">
-                      <NavItemImage src="https://cdn.echelonindustries.net/cdn/images/1f9124b3f8806740_1775521597.png" alt="Lyrix AI" />
-                    </div>
-                    <div className="flex flex-col">
-                      <div className="text-xl font-semibold text-foreground leading-tight mb-0.5 group-hover:text-primary transition-colors">Lyrix AI</div>
-                      <div className="text-xs text-muted-foreground line-clamp-1">Intelligent content generation.</div>
-                    </div>
-                  </Link>
-                  <Link href="/features/visual-editor" className="flex items-center gap-3 px-2 py-1 rounded-lg hover:bg-muted group transition-all">
-                    <div className="aspect-square w-15 relative rounded-lg border border-border/50 overflow-hidden bg-muted shadow-sm">
-                      <NavItemImage src="https://cdn.echelonindustries.net/cdn/images/27657da2053fc161_1775521568.png" alt="Visual Editor" />
-                    </div>
-                    <div className="flex flex-col">
-                      <div className="text-xl font-semibold text-foreground leading-tight mb-0.5 group-hover:text-primary transition-colors">Visual Editor</div>
-                      <div className="text-xs text-muted-foreground line-clamp-1">Drag & drop interface.</div>
-                    </div>
-                  </Link>
-                  <Link href="/features/renderer" className="flex items-center gap-3 px-2 py-1 rounded-lg hover:bg-muted group transition-all">
-                    <div className="aspect-square w-15 relative rounded-lg border border-border/50 overflow-hidden bg-muted shadow-sm">
-                      <NavItemImage src="https://cdn.echelonindustries.net/cdn/images/4e62d36d6308f170_1775521580.png" alt="Renderer" />
-                    </div>
-                    <div className="flex flex-col">
-                      <div className="text-xl font-semibold text-foreground leading-tight mb-0.5 group-hover:text-primary transition-colors">Renderer</div>
-                      <div className="text-xs text-muted-foreground line-clamp-1">High-performance delivery.</div>
-                    </div>
-                  </Link>
-                  <Link href="/features/plugin-engine" className="flex items-center gap-3 px-2 py-1 rounded-lg hover:bg-muted group transition-all">
-                    <div className="aspect-square w-15 relative rounded-lg border border-border/50 overflow-hidden bg-muted shadow-sm">
-                      <NavItemImage src="https://cdn.echelonindustries.net/cdn/images/d520ae46a90cc872_1775521588.png" alt="Plugin Engine" />
-                    </div>
-                    <div className="flex flex-col">
-                      <div className="text-xl font-semibold text-foreground leading-tight mb-0.5 group-hover:text-primary transition-colors">Plugin Engine</div>
-                      <div className="text-xs text-muted-foreground line-clamp-1">Extend anytime anywhere.</div>
-                    </div>
-                  </Link>
-                  <Link href="/features/team-sync" className="flex items-center gap-3 px-2 py-1 rounded-lg hover:bg-muted group transition-all">
-                    <div className="aspect-square w-15 relative rounded-lg border border-border/50 overflow-hidden bg-muted shadow-sm">
-                      <NavItemImage src="https://cdn.echelonindustries.net/cdn/images/8e60a31e12b700ae_1775521520.png" alt="Team Sync" />
-                    </div>
-                    <div className="flex flex-col">
-                      <div className="text-xl font-semibold text-foreground leading-tight mb-0.5 group-hover:text-primary transition-colors">Team Sync</div>
-                      <div className="text-xs text-muted-foreground line-clamp-1">Collaborate in real time.</div>
-                    </div>
-                  </Link>
-                  <Link href="/features/ai-automation" className="flex items-center gap-3 px-2 py-1 rounded-lg hover:bg-muted group transition-all">
-                    <div className="aspect-square w-15 relative rounded-lg border border-border/50 overflow-hidden bg-muted shadow-sm">
-                      <NavItemImage src="https://cdn.echelonindustries.net/cdn/images/0e730cb402b95a86_1775521606.png" alt="AI Automation" />
-                    </div>
-                    <div className="flex flex-col">
-                      <div className="text-xl font-semibold text-foreground leading-tight mb-0.5 group-hover:text-primary transition-colors">AI Automation</div>
-                      <div className="text-xs text-muted-foreground line-clamp-1">Next-gen workflows.</div>
-                    </div>
-                  </Link>
+                  {NAV_FEATURE_IMAGES.map((feature, index) => (
+                    <Link key={index} href={feature.href} className="flex items-center gap-3 px-2 py-1 rounded-lg hover:bg-muted group transition-all">
+                      <div className="aspect-square w-15 relative rounded-lg border border-border/50 overflow-hidden bg-muted shadow-sm">
+                        <NavItemImage src={feature.imgSrc} alt={feature.alt} />
+                      </div>
+                      <div className="flex flex-col">
+                        <div className="text-xl font-semibold text-foreground leading-tight mb-0.5 group-hover:text-primary transition-colors">{feature.alt}</div>
+                        <div className="text-xs text-muted-foreground line-clamp-1">{feature.description}</div>
+                      </div>
+                    </Link>
+                  ))}
                 </div>
 
                 {/* Right Side: Plugin Marketplace Promo */}
@@ -207,12 +203,9 @@ export default function Navbar() {
         <div className="relative z-20 grid gap-6 rounded-md p-4 text-foreground">
           <div className="grid gap-4">
             <h4 className="font-medium leading-none text-foreground">Features</h4>            <div className="grid gap-2 pl-4 border-l border-border">
-              <MobileLink href="/features/lyrix-ai" icon="https://cdn.echelonindustries.net/cdn/images/1f9124b3f8806740_1775521597.png"> Lyrix AI </MobileLink>
-              <MobileLink href="/features/visual-editor" icon="https://cdn.echelonindustries.net/cdn/images/27657da2053fc161_1775521568.png"> Visual Editor </MobileLink>
-              <MobileLink href="/features/renderer" icon="https://cdn.echelonindustries.net/cdn/images/4e62d36d6308f170_1775521580.png"> Renderer </MobileLink>
-              <MobileLink href="/features/plugin-engine" icon="https://cdn.echelonindustries.net/cdn/images/d520ae46a90cc872_1775521588.png"> Plugin Engine </MobileLink>
-              <MobileLink href="/features/team-sync" icon="https://cdn.echelonindustries.net/cdn/images/8e60a31e12b700ae_1775521520.png"> Team Sync </MobileLink>
-              <MobileLink href="/features/ai-automation" icon="https://cdn.echelonindustries.net/cdn/images/0e730cb402b95a86_1775521606.png"> AI Automation </MobileLink>
+              {NAV_FEATURE_IMAGES.map((feature) => (
+                <MobileLink key={feature.href} href={feature.href} icon={feature.imgSrc}> {feature.alt} </MobileLink>
+              ))}
             </div>
           </div>
 
@@ -265,22 +258,13 @@ export default function Navbar() {
 
       {/* Optimized Image Preloading to ensure they only load once */}
       <div className="hidden pointer-events-none" aria-hidden="true">
-        {NAV_FEATURE_IMAGES.map((src) => (
-          <Image key={src} src={src} alt="preload" width={40} height={40} priority />
+        {NAV_FEATURE_IMAGES.map((feature) => (
+          <Image key={feature.href} src={feature.imgSrc} alt={feature.alt} width={40} height={40} priority />
         ))}
       </div>
     </header>
   );
 }
-
-const NAV_FEATURE_IMAGES = [
-  "https://cdn.echelonindustries.net/cdn/images/9549e6444bfbb3c4_1775522484.png",
-  "https://cdn.echelonindustries.net/cdn/images/3af09f5dbfa64465_1775522443.png",
-  "https://cdn.echelonindustries.net/cdn/images/500da37736d225cc_1775522463.png",
-  "https://cdn.echelonindustries.net/cdn/images/9aa5c2261c3499ee_1775522474.png",
-  "https://cdn.echelonindustries.net/cdn/images/d5f4545a12497662_1775522451.png",
-  "https://cdn.echelonindustries.net/cdn/images/0fdfa7f52c7354b4_1775522493.png",
-];
 
 const NavItemImage = ({ src, alt }: { src: string; alt: string }) => {
   const [isLoaded, setIsLoaded] = useState(false);
@@ -297,11 +281,10 @@ const NavItemImage = ({ src, alt }: { src: string; alt: string }) => {
           }}
         />
       )}
-      <Image
+      <img
         src={src}
         alt={alt}
-        fill
-        onLoadingComplete={() => setIsLoaded(true)}
+        onLoad={() => setIsLoaded(true)}
         className={cn(
           "object-cover transition-all duration-700 ease-out",
           isLoaded ? "opacity-100 blur-0 scale-100" : "opacity-0 blur-xl scale-110"
