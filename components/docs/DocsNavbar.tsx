@@ -16,9 +16,6 @@ export function DocsNavbar() {
                     <Link href="/">
                         <Logo height={40} width={40} text="Lyrix" textClassName="text-lg font-bold" />
                     </Link>
-                    <span className="hidden sm:block text-xs font-mono text-muted-foreground border border-border rounded-md px-2 py-0.5">
-                        Docs
-                    </span>
                 </div>
 
                 {/* Search */}
@@ -41,9 +38,6 @@ export function DocsNavbar() {
                         <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
                             <Github className="w-4 h-4" />
                         </Button>
-                    </Link>
-                    <Link href="/login">
-                        <Button size="sm" className="h-8 hidden sm:inline-flex">Get Started</Button>
                     </Link>
                 </div>
             </div>

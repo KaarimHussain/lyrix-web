@@ -2,13 +2,19 @@ import type { NextAuthConfig } from "next-auth";
 import Google from "next-auth/providers/google";
 
 /**
- * Edge-safe auth config — no Node.js-only imports (mongoose, bcryptjs).
+ * Edge-safe auth config - no Node.js-only imports (mongoose, bcryptjs).
  * The Credentials provider is added in auth.ts where Node runtime is guaranteed.
  */
+const googleClientId = process.env.AUTH_GOOGLE_ID;
+const googleClientSecret = process.env.AUTH_GOOGLE_SECRET;
+const hasValidGoogleAuth =
+  !!googleClientId &&
+  !!googleClientSecret &&
+  googleClientId !== "your-google-client-id" &&
+  googleClientSecret !== "your-google-client-secret";
+
 export default {
-  providers: [
-    Google,
-  ],
+  providers: hasValidGoogleAuth ? [Google] : [],
   session: {
     strategy: "jwt",
   },
@@ -37,13 +43,20 @@ export default {
         nextUrl.pathname.startsWith("/register") ||
         nextUrl.pathname.startsWith("/forgot-password") ||
         nextUrl.pathname.startsWith("/reset-password");
+      const authError = nextUrl.searchParams.get("error");
+      const isOauthAccountNotLinkedError = authError === "OAuthAccountNotLinked";
 
       if (isOnDashboard) {
         if (isLoggedIn) return true;
         return false; // Redirect to /login
       }
 
-      // Logged-in users visiting /, /login, or /register → redirect to /dashboard
+      // Preserve OAuthAccountNotLinked on auth pages so the login/register UI can display it.
+      if (isOnAuth && isOauthAccountNotLinkedError) {
+        return true;
+      }
+
+      // Logged-in users visiting public/auth pages are redirected to /dashboard.
       if ((isOnHome || isOnAuth) && isLoggedIn) {
         return Response.redirect(new URL("/dashboard", nextUrl));
       }

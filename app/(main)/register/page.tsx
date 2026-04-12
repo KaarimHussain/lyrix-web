@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { Suspense, useMemo } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import LyrixInput from "@/components/LyrixInput";
 import { Separator } from "@/components/ui/separator";
@@ -10,15 +11,31 @@ import Logo from "@/components/logo";
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 
-export default function RegisterPage() {
+type AuthError = {
+    title: string;
+    description: string;
+};
+
+function RegisterPageContent() {
     const router = useRouter();
+    const searchParams = useSearchParams();
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [error, setError] = useState("");
+    const [error, setError] = useState<AuthError | null>(null);
     const [fieldErrors, setFieldErrors] = useState<{ name?: string; email?: string; password?: string }>({});
     const [isLoading, setIsLoading] = useState(false);
     const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+    const oauthParamError = useMemo(() => {
+        const errorParam = searchParams.get("error");
+        if (errorParam === "OAuthAccountNotLinked") {
+            return {
+                title: "Account already exists",
+                description: "An account with this email already exists. Please sign in with your password instead.",
+            };
+        }
+        return null;
+    }, [searchParams]);
 
     const calculateStrength = (pass: string) => {
         let score = 0;
@@ -38,20 +55,92 @@ export default function RegisterPage() {
             strength <= 3 ? "bg-amber-500" :
                 "bg-primary";
 
+    const parseApiError = async (res: Response, fallbackMessage: string): Promise<string> => {
+        try {
+            const data = await res.json();
+            if (typeof data?.error === "string" && data.error.trim()) {
+                return data.error.trim();
+            }
+            if (typeof data?.message === "string" && data.message.trim()) {
+                return data.message.trim();
+            }
+            return fallbackMessage;
+        } catch {
+            return fallbackMessage;
+        }
+    };
+
+    const buildRegisterError = (rawMessage?: string, status?: number): AuthError => {
+        const message = rawMessage?.trim() || "";
+        const lowered = message.toLowerCase();
+
+        if (status === 409 || lowered.includes("already exists")) {
+            return {
+                title: "Email already in use",
+                description: "An account already exists for this email. Try logging in or use a different email.",
+            };
+        }
+        if (lowered === "configuration" || lowered.includes("config")) {
+            return {
+                title: "Authentication temporarily unavailable",
+                description:
+                    "Sign-up is not fully configured right now. If you're an admin, check AUTH_SECRET and Google auth environment variables.",
+            };
+        }
+        if (status === 400 || lowered.includes("required") || lowered.includes("valid email")) {
+            return {
+                title: "Invalid registration details",
+                description: message || "Please check your input and try again.",
+            };
+        }
+        if (lowered.includes("google")) {
+            return {
+                title: "Google account detected",
+                description: "This email is linked to Google sign-in. Continue with Google instead.",
+            };
+        }
+        if (status === 500 || lowered.includes("failed") || lowered.includes("error")) {
+            return {
+                title: "Server error",
+                description: message || "Something went wrong on our side. Please try again in a moment.",
+            };
+        }
+        return {
+            title: "Registration failed",
+            description: message || "We couldn't create your account. Please try again.",
+        };
+    };
+
     const handleGoogleSignIn = async () => {
         setIsGoogleLoading(true);
-        setError("");
+        setError(null);
         try {
-            await signIn("google", { callbackUrl: "/dashboard" });
+            const result = await signIn("google", { callbackUrl: "/dashboard", redirect: false });
+            if (result?.error) {
+                setError(buildRegisterError(result.error));
+                return;
+            }
+            if (result?.url) {
+                router.push(result.url);
+                return;
+            }
+            setError({
+                title: "Google sign-up failed",
+                description: "We couldn't start Google sign-up. Please try again.",
+            });
         } catch {
-            setError("Something went wrong with Google sign in");
+            setError({
+                title: "Google sign-up failed",
+                description: "A network or provider error occurred while signing up with Google.",
+            });
+        } finally {
             setIsGoogleLoading(false);
         }
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setError("");
+        setError(null);
         setFieldErrors({});
 
         // Client-side validation
@@ -63,6 +152,10 @@ export default function RegisterPage() {
 
         if (Object.keys(errors).length > 0) {
             setFieldErrors(errors);
+            setError({
+                title: "Missing required fields",
+                description: "Please complete all required fields before creating your account.",
+            });
             return;
         }
 
@@ -76,19 +169,21 @@ export default function RegisterPage() {
                 body: JSON.stringify({ name: name.trim(), email, password }),
             });
 
-            const data = await res.json();
+            const message = await parseApiError(res, "Registration failed");
 
             if (!res.ok) {
                 // Map known errors to fields
-                if (data.error?.toLowerCase().includes("email")) {
-                    setFieldErrors({ email: data.error });
-                } else if (data.error?.toLowerCase().includes("password")) {
-                    setFieldErrors({ password: data.error });
-                } else if (data.error?.toLowerCase().includes("name")) {
-                    setFieldErrors({ name: data.error });
+                const lowered = message.toLowerCase();
+                if (lowered.includes("email")) {
+                    setFieldErrors({ email: message });
+                } else if (lowered.includes("password")) {
+                    setFieldErrors({ password: message });
+                } else if (lowered.includes("name")) {
+                    setFieldErrors({ name: message });
                 } else {
-                    setError(data.error || "Registration failed");
+                    setFieldErrors({});
                 }
+                setError(buildRegisterError(message, res.status));
                 setIsLoading(false);
                 return;
             }
@@ -101,22 +196,38 @@ export default function RegisterPage() {
             });
 
             if (result?.error) {
-                setError("Account created but sign-in failed. Please log in manually.");
+                setError({
+                    title: "Account created, sign-in failed",
+                    description: "Your account was created but auto sign-in failed. Please log in manually.",
+                });
                 setIsLoading(false);
                 return;
             }
 
             // Step 3: Send OTP for email verification
-            await fetch("/api/auth/send-otp", {
+            const otpRes = await fetch("/api/auth/send-otp", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email }),
             });
+            if (!otpRes.ok) {
+                const otpError = await parseApiError(
+                    otpRes,
+                    "Account created, but we could not send your verification code."
+                );
+                setError({
+                    title: "Verification code not sent",
+                    description: `${otpError} You can retry from the verify email screen.`,
+                });
+            }
 
             router.push(`/verify-email?email=${encodeURIComponent(email)}`);
             router.refresh();
         } catch {
-            setError("Something went wrong. Please try again.");
+            setError({
+                title: "Unexpected error",
+                description: "A network or server error occurred while creating your account. Please try again.",
+            });
         } finally {
             setIsLoading(false);
         }
@@ -151,9 +262,14 @@ export default function RegisterPage() {
                     </div>
 
                     {/* General error banner */}
-                    {error && (
-                        <div className="rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive text-center">
-                            {error}
+                    {(oauthParamError || error) && (
+                        <div
+                            role="alert"
+                            aria-live="polite"
+                            className="rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-destructive text-left"
+                        >
+                            <p className="text-sm font-semibold">{(oauthParamError || error)?.title}</p>
+                            <p className="text-xs text-destructive/85 mt-0.5">{(oauthParamError || error)?.description}</p>
                         </div>
                     )}
 
@@ -355,5 +471,13 @@ export default function RegisterPage() {
             </div>
 
         </div>
+    );
+}
+
+export default function RegisterPage() {
+    return (
+        <Suspense fallback={null}>
+            <RegisterPageContent />
+        </Suspense>
     );
 }

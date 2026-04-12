@@ -1,4 +1,5 @@
 import NextAuth from "next-auth";
+import { CredentialsSignin } from "next-auth";
 import { MongoDBAdapter } from "@auth/mongodb-adapter";
 import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
@@ -6,6 +7,10 @@ import clientPromise from "@/lib/mongodb";
 import dbConnect from "@/lib/mongoose";
 import User from "@/models/User";
 import authConfig from "@/auth.config";
+
+class OAuthOnlyCredentialsSigninError extends CredentialsSignin {
+  code = "oauth_only_account";
+}
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   secret: process.env.AUTH_SECRET,
@@ -39,12 +44,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         });
 
         if (!user) {
-          throw new Error("No account found with this email");
+          return null;
         }
 
         // OAuth-only account trying credentials login
         if (!user.password) {
-          throw new Error("Use Google to sign in");
+          throw new OAuthOnlyCredentialsSigninError();
         }
 
         const isValid = await bcrypt.compare(
@@ -53,7 +58,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         );
 
         if (!isValid) {
-          throw new Error("Invalid password");
+          return null;
         }
 
         return {

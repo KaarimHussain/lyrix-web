@@ -77,8 +77,9 @@ export function Footer() {
                     <div className="flex flex-col items-center md:items-start gap-4">
                         <h4 className="text-[11px] font-bold text-white/40 uppercase tracking-widest">Legal</h4>
                         <div className="flex flex-col gap-3">
-                            <Link href="#" className="text-sm text-white/70 hover:text-white transition-colors">MIT License</Link>
-                            <Link href="#" className="text-sm text-white/70 hover:text-white transition-colors">Privacy</Link>
+                            <Link href="/mit-license" className="text-sm text-white/70 hover:text-white transition-colors">MIT License</Link>
+                            <Link href="/privacy-policy" className="text-sm text-white/70 hover:text-white transition-colors">Privacy Policy</Link>
+                            <Link href="/terms-and-services" className="text-sm text-white/70 hover:text-white transition-colors">Terms and Services</Link>
                         </div>
                     </div>
 

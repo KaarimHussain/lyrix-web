@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { Suspense, useMemo } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { Button } from "@/components/ui/button";
@@ -10,29 +11,130 @@ import { Separator } from "@/components/ui/separator";
 import { Chrome, Quote, Loader2 } from "lucide-react";
 import Logo from "@/components/logo";
 
-export default function LoginPage() {
+type AuthError = {
+    title: string;
+    description: string;
+};
+
+function LoginPageContent() {
     const router = useRouter();
+    const searchParams = useSearchParams();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [error, setError] = useState("");
+    const [error, setError] = useState<AuthError | null>(null);
     const [fieldErrors, setFieldErrors] = useState<{ email?: string; password?: string }>({});
     const [isLoading, setIsLoading] = useState(false);
     const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+    const oauthParamError = useMemo(() => {
+        const errorParam = searchParams.get("error");
+        if (errorParam === "OAuthAccountNotLinked") {
+            return {
+                title: "Account already exists",
+                description: "An account with this email already exists. Please sign in with your password instead.",
+            };
+        }
+        return null;
+    }, [searchParams]);
+
+    const buildLoginError = (rawError?: string | null, code?: string | null): AuthError => {
+        const normalized = rawError?.trim() || "";
+        const lowered = normalized.toLowerCase();
+        const normalizedCode = code?.trim().toLowerCase() || "";
+
+        if (!normalized) {
+            return {
+                title: "Sign in failed",
+                description: "We couldn't sign you in right now. Please try again.",
+            };
+        }
+
+        if (lowered === "configuration" || lowered.includes("config")) {
+            return {
+                title: "Authentication temporarily unavailable",
+                description:
+                    "Sign-in is not fully configured right now. If you're an admin, check AUTH_SECRET and Google auth environment variables.",
+            };
+        }
+
+        if (normalized === "CredentialsSignin" && normalizedCode === "oauth_only_account") {
+            return {
+                title: "Google sign-in required",
+                description: "This account was created with Google. Please continue with Google to sign in.",
+            };
+        }
+
+        if (normalized === "CredentialsSignin") {
+            return {
+                title: "Invalid credentials",
+                description: "Your email or password is incorrect. Please check and try again.",
+            };
+        }
+
+        if (lowered.includes("google")) {
+            return {
+                title: "Google sign-in required",
+                description: "This account was created with Google. Please continue with Google to sign in.",
+            };
+        }
+
+        if (lowered.includes("no account") || lowered.includes("not found")) {
+            return {
+                title: "Account not found",
+                description: "No account exists for this email address. Check your email or create a new account.",
+            };
+        }
+
+        if (lowered.includes("password")) {
+            return {
+                title: "Password issue",
+                description: normalized,
+            };
+        }
+
+        if (lowered.includes("database") || lowered.includes("connection")) {
+            return {
+                title: "Service unavailable",
+                description: "We're having trouble reaching the database. Please try again in a moment.",
+            };
+        }
+
+        return {
+            title: "Sign in failed",
+            description: normalized,
+        };
+    };
 
     const handleGoogleSignIn = async () => {
         setIsGoogleLoading(true);
-        setError("");
+        setError(null);
         try {
-            await signIn("google", { callbackUrl: "/dashboard" });
+            const result = await signIn("google", { callbackUrl: "/dashboard", redirect: false });
+            if (result?.error) {
+                setError(buildLoginError(result.error));
+                return;
+            }
+            if (result?.url) {
+                router.push(result.url);
+                return;
+            }
+            setError({
+                title: "Google sign-in failed",
+                description: "We couldn't start Google sign-in. Please try again.",
+            });
         } catch {
-            setError("Something went wrong with Google sign in");
+            setError({
+                title: "Google sign-in failed",
+                description: "A network or provider error occurred while signing in with Google.",
+            });
+            setIsGoogleLoading(false);
+        } finally {
             setIsGoogleLoading(false);
         }
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setError("");
+        setError(null);
         setFieldErrors({});
 
         // Client-side validation
@@ -42,6 +144,10 @@ export default function LoginPage() {
 
         if (Object.keys(errors).length > 0) {
             setFieldErrors(errors);
+            setError({
+                title: "Missing required fields",
+                description: "Please fill in your email and password to continue.",
+            });
             return;
         }
 
@@ -55,27 +161,28 @@ export default function LoginPage() {
             });
 
             if (result?.error) {
-                // NextAuth wraps the error message
-                const errorMessage = result.error === "CredentialsSignin"
-                    ? "Invalid email or password"
-                    : result.error;
+                const parsedError = buildLoginError(result.error, result.code);
 
                 // Show targeted field errors for known messages
-                if (errorMessage.includes("Google")) {
-                    setFieldErrors({ email: "Use Google to sign in" });
-                } else if (errorMessage.includes("No account")) {
-                    setFieldErrors({ email: errorMessage });
-                } else if (errorMessage.includes("password")) {
-                    setFieldErrors({ password: errorMessage });
+                if (parsedError.title === "Google sign-in required") {
+                    setFieldErrors({ email: "Use Google to sign in for this account." });
+                } else if (parsedError.title === "Account not found") {
+                    setFieldErrors({ email: "No account found with this email." });
+                } else if (parsedError.title === "Password issue" || parsedError.title === "Invalid credentials") {
+                    setFieldErrors({ password: "Please check your password and try again." });
                 } else {
-                    setError(errorMessage);
+                    setFieldErrors({});
                 }
+                setError(parsedError);
             } else {
                 router.push("/dashboard");
                 router.refresh();
             }
         } catch {
-            setError("Something went wrong. Please try again.");
+            setError({
+                title: "Unexpected error",
+                description: "A network or server error occurred while signing in. Please try again.",
+            });
         } finally {
             setIsLoading(false);
         }
@@ -184,9 +291,14 @@ export default function LoginPage() {
                     </div>
 
                     {/* General error banner */}
-                    {error && (
-                        <div className="rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive text-center">
-                            {error}
+                    {(oauthParamError || error) && (
+                        <div
+                            role="alert"
+                            aria-live="polite"
+                            className="rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-destructive text-left"
+                        >
+                            <p className="text-sm font-semibold">{(oauthParamError || error)?.title}</p>
+                            <p className="text-xs text-destructive/85 mt-0.5">{(oauthParamError || error)?.description}</p>
                         </div>
                     )}
 
@@ -284,5 +396,13 @@ export default function LoginPage() {
                 </div>
             </div>
         </div>
+    );
+}
+
+export default function LoginPage() {
+    return (
+        <Suspense fallback={null}>
+            <LoginPageContent />
+        </Suspense>
     );
 }

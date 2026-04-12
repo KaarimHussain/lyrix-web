@@ -78,6 +78,7 @@ export const metadata: Metadata = {
 };
 
 import NextAuthSessionProvider from "@/components/providers/session-provider";
+import { NotificationProvider } from "@/components/providers/notification-provider";
 
 export default function RootLayout({
   children,
@@ -127,7 +128,7 @@ export default function RootLayout({
         />
 
         <NextAuthSessionProvider>
-          {children}
+          <NotificationProvider>{children}</NotificationProvider>
         </NextAuthSessionProvider>
       </body>
     </html>

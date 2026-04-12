@@ -8,8 +8,6 @@ import {
     CreditCard,
     Shield,
     Trash2,
-    Settings,
-    Layers,
     ChevronRight,
     Check,
     Github,
@@ -19,8 +17,8 @@ import {
     AlertTriangle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import Logo from "@/components/logo";
 import LyrixInput from "@/components/LyrixInput";
+import { DashboardSidebar } from "@/components/dashboard/DashboardSidebar";
 
 // ─── Shared Sidebar (same as dashboard) ──────────────────────────────────────
 
@@ -30,42 +28,6 @@ const user = {
     plan: "Community",
     avatar: "KH",
 };
-
-function Sidebar() {
-    return (
-        <aside className="hidden md:flex flex-col w-[220px] shrink-0 border-r border-border bg-background h-screen sticky top-0">
-            <div className="h-16 flex items-center px-5 border-b border-border">
-                <Link href="/">
-                    <Logo height={36} width={36} text="Lyrix" textClassName="text-lg font-bold" />
-                </Link>
-            </div>
-            <nav className="flex-1 px-3 py-4 flex flex-col gap-1">
-                <SidebarLink href="/dashboard" icon={Layers} label="Projects" />
-                <SidebarLink href="/dashboard/settings" icon={Settings} label="Settings" active />
-            </nav>
-            <div className="border-t border-border p-4">
-                <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-primary/20 text-primary flex items-center justify-center text-xs font-bold shrink-0">
-                        {user.avatar}
-                    </div>
-                    <div className="flex flex-col min-w-0">
-                        <span className="text-sm font-medium text-foreground truncate">{user.name}</span>
-                        <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider">{user.plan}</span>
-                    </div>
-                </div>
-            </div>
-        </aside>
-    );
-}
-
-function SidebarLink({ href, icon: Icon, label, active }: { href: string; icon: React.ElementType; label: string; active?: boolean }) {
-    return (
-        <Link href={href} className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${active ? "bg-primary/10 text-primary" : "text-muted-foreground hover:text-foreground hover:bg-muted/50"}`}>
-            <Icon className="w-4 h-4 shrink-0" />
-            {label}
-        </Link>
-    );
-}
 
 // ─── Section Shell ────────────────────────────────────────────────────────────
 
@@ -325,7 +287,7 @@ export default function SettingsPage() {
 
     return (
         <div className="flex min-h-screen bg-background text-foreground">
-            <Sidebar />
+            <DashboardSidebar user={user} showSignOut={false} />
 
             <div className="flex-1 flex flex-col min-w-0">
                 {/* Topbar */}
