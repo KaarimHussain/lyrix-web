@@ -115,19 +115,8 @@ function RegisterPageContent() {
         setIsGoogleLoading(true);
         setError(null);
         try {
-            const result = await signIn("google", { callbackUrl: "/dashboard", redirect: false });
-            if (result?.error) {
-                setError(buildRegisterError(result.error));
-                return;
-            }
-            if (result?.url) {
-                router.push(result.url);
-                return;
-            }
-            setError({
-                title: "Google sign-up failed",
-                description: "We couldn't start Google sign-up. Please try again.",
-            });
+            // OAuth providers should use redirect flow for reliable behavior across environments.
+            await signIn("google", { callbackUrl: "/dashboard" });
         } catch {
             setError({
                 title: "Google sign-up failed",

@@ -108,25 +108,13 @@ function LoginPageContent() {
         setIsGoogleLoading(true);
         setError(null);
         try {
-            const result = await signIn("google", { callbackUrl: "/dashboard", redirect: false });
-            if (result?.error) {
-                setError(buildLoginError(result.error));
-                return;
-            }
-            if (result?.url) {
-                router.push(result.url);
-                return;
-            }
-            setError({
-                title: "Google sign-in failed",
-                description: "We couldn't start Google sign-in. Please try again.",
-            });
+            // OAuth providers should use redirect flow for reliable behavior across environments.
+            await signIn("google", { callbackUrl: "/dashboard" });
         } catch {
             setError({
                 title: "Google sign-in failed",
                 description: "A network or provider error occurred while signing in with Google.",
             });
-            setIsGoogleLoading(false);
         } finally {
             setIsGoogleLoading(false);
         }
