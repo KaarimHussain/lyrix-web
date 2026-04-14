@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
 import {
     User,
     Bell,
@@ -17,16 +18,19 @@ import {
     AlertTriangle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
 import LyrixInput from "@/components/LyrixInput";
 import { DashboardSidebar } from "@/components/dashboard/DashboardSidebar";
+import { useNotification } from "@/components/providers/notification-provider";
 
 // ─── Shared Sidebar (same as dashboard) ──────────────────────────────────────
 
-const user = {
-    name: "Kaarim Hussain",
-    email: "kaarim@lyrix.dev",
-    plan: "Community",
-    avatar: "KH",
+const defaultNotificationSettings = {
+    projectUpdates: true,
+    pluginReleases: false,
+    billing: true,
+    changelog: true,
+    marketing: false,
 };
 
 // ─── Section Shell ────────────────────────────────────────────────────────────
@@ -54,12 +58,23 @@ const TABS = [
 
 // ─── Tab: Profile ─────────────────────────────────────────────────────────────
 
-function ProfileTab() {
-    const [name, setName] = useState(user.name);
-    const [email] = useState(user.email);
+function ProfileTab({
+    profile,
+    draftName,
+    onDraftNameChange,
+    onSave,
+    loading,
+}: {
+    profile: { name: string; email: string; avatar: string };
+    draftName: string;
+    onDraftNameChange: (name: string) => void;
+    onSave: (name: string) => Promise<void>;
+    loading: boolean;
+}) {
     const [saved, setSaved] = useState(false);
 
-    const handleSave = () => {
+    const handleSave = async () => {
+        await onSave(draftName);
         setSaved(true);
         setTimeout(() => setSaved(false), 2000);
     };
@@ -70,19 +85,19 @@ function ProfileTab() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-lg">
                     <LyrixInput
                         label="Full Name"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
+                        value={draftName}
+                        onChange={(e) => onDraftNameChange(e.target.value)}
                     />
                     <LyrixInput
                         label="Email"
                         type="email"
-                        value={email}
+                        value={profile.email}
                         hint="Contact support to change your email."
                         disabled
                     />
                 </div>
                 <div>
-                    <Button size="sm" className="h-9 gap-2" onClick={handleSave}>
+                    <Button size="sm" className="h-9 gap-2" onClick={handleSave} disabled={loading}>
                         {saved ? <><Check className="w-3.5 h-3.5" /> Saved</> : "Save Changes"}
                     </Button>
                 </div>
@@ -91,27 +106,12 @@ function ProfileTab() {
             <Section title="Avatar" description="Your avatar is auto-generated from your initials.">
                 <div className="flex items-center gap-4">
                     <div className="w-16 h-16 rounded-2xl bg-primary/20 text-primary flex items-center justify-center text-2xl font-bold">
-                        {user.avatar}
+                        {profile.avatar}
                     </div>
                     <div className="flex flex-col gap-1">
                         <p className="text-sm text-muted-foreground">Custom avatar uploads coming in a future update.</p>
                         <span className="text-xs font-mono text-muted-foreground/60">Planned — v0.2.0</span>
                     </div>
-                </div>
-            </Section>
-
-            <Section title="Connected Accounts" description="Link external accounts for faster login.">
-                <div className="flex items-center justify-between p-4 rounded-xl bg-card border border-border max-w-lg">
-                    <div className="flex items-center gap-3">
-                        <Github className="w-5 h-5 text-foreground" />
-                        <div>
-                            <p className="text-sm font-medium text-foreground">GitHub</p>
-                            <p className="text-xs text-muted-foreground">@kaarimhussain</p>
-                        </div>
-                    </div>
-                    <span className="text-[10px] font-mono font-bold uppercase tracking-widest px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
-                        Connected
-                    </span>
                 </div>
             </Section>
         </div>
@@ -120,17 +120,15 @@ function ProfileTab() {
 
 // ─── Tab: Notifications ───────────────────────────────────────────────────────
 
-function NotificationsTab() {
-    const [settings, setSettings] = useState({
-        projectUpdates: true,
-        pluginReleases: false,
-        billing: true,
-        changelog: true,
-        marketing: false,
-    });
-
-    const toggle = (key: keyof typeof settings) =>
-        setSettings((prev) => ({ ...prev, [key]: !prev[key] }));
+function NotificationsTab({
+    settings,
+    onToggle,
+    loading,
+}: {
+    settings: typeof defaultNotificationSettings;
+    onToggle: (key: keyof typeof defaultNotificationSettings, value: boolean) => Promise<void>;
+    loading: boolean;
+}) {
 
     const items = [
         { key: "projectUpdates", label: "Project Updates", desc: "Notified when a collaborator edits a project." },
@@ -150,12 +148,11 @@ function NotificationsTab() {
                                 <p className="text-sm font-medium text-foreground">{item.label}</p>
                                 <p className="text-xs text-muted-foreground mt-0.5">{item.desc}</p>
                             </div>
-                            <button
-                                onClick={() => toggle(item.key)}
-                                className={`relative w-10 h-6 rounded-full transition-colors duration-200 shrink-0 ${settings[item.key] ? "bg-primary" : "bg-muted"}`}
-                            >
-                                <span className={`absolute top-1 w-4 h-4 rounded-full bg-white shadow transition-transform duration-200 ${settings[item.key] ? "translate-x-5" : "translate-x-1"}`} />
-                            </button>
+                            <Switch
+                                checked={settings[item.key]}
+                                onCheckedChange={(checked) => onToggle(item.key, checked)}
+                                disabled={loading}
+                            />
                         </div>
                     ))}
                 </div>
@@ -274,11 +271,147 @@ function SecurityTab() {
 
 export default function SettingsPage() {
     const [activeTab, setActiveTab] = useState("profile");
+    const { data: session } = useSession();
+    const { notify } = useNotification();
+    const [loading, setLoading] = useState(true);
+    const [saving, setSaving] = useState(false);
+    const [profile, setProfile] = useState({ name: "User", email: "", avatar: "U" });
+    const [profileDraftName, setProfileDraftName] = useState("User");
+    const [notificationSettings, setNotificationSettings] = useState(defaultNotificationSettings);
+
+    const sidebarUser = {
+        name: profile.name || session?.user?.name || "User",
+        email: profile.email || session?.user?.email || "",
+        plan: "Community",
+        avatar:
+            profile.name
+                ?.split(" ")
+                .map((part) => part[0])
+                .join("")
+                .toUpperCase()
+                .slice(0, 2) || "U",
+    };
+
+    useEffect(() => {
+        const loadSettings = async () => {
+            setLoading(true);
+            try {
+                const [profileRes, notificationsRes] = await Promise.all([
+                    fetch("/api/settings/profile", { cache: "no-store" }),
+                    fetch("/api/settings/notifications", { cache: "no-store" }),
+                ]);
+
+                if (profileRes.ok) {
+                    const payload = await profileRes.json();
+                    const name = payload?.profile?.name || "User";
+                    const email = payload?.profile?.email || "";
+                    setProfile({
+                        name,
+                        email,
+                        avatar: name
+                            .split(" ")
+                            .map((part: string) => part[0])
+                            .join("")
+                            .toUpperCase()
+                            .slice(0, 2) || "U",
+                    });
+                    setProfileDraftName(name);
+                }
+
+                if (notificationsRes.ok) {
+                    const payload = await notificationsRes.json();
+                    setNotificationSettings({
+                        ...defaultNotificationSettings,
+                        ...(payload?.notifications || {}),
+                    });
+                }
+            } catch {
+                notify({
+                    type: "error",
+                    title: "Settings load failed",
+                    description: "We couldn't load your settings right now.",
+                });
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        void loadSettings();
+    }, [notify]);
+
+    const saveProfile = async (name: string) => {
+        if (!name.trim()) {
+            notify({ type: "error", title: "Name required", description: "Please enter your full name." });
+            return;
+        }
+
+        setSaving(true);
+        try {
+            const response = await fetch("/api/settings/profile", {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ name: name.trim() }),
+            });
+            const payload = await response.json().catch(() => ({}));
+            if (!response.ok) {
+                notify({
+                    type: "error",
+                    title: "Profile update failed",
+                    description: payload.error || "Could not save profile changes.",
+                });
+                return;
+            }
+            const newName = payload?.profile?.name || name.trim();
+            const email = payload?.profile?.email || profile.email;
+            setProfile({
+                name: newName,
+                email,
+                avatar: newName
+                    .split(" ")
+                    .map((part: string) => part[0])
+                    .join("")
+                    .toUpperCase()
+                    .slice(0, 2) || "U",
+            });
+            setProfileDraftName(newName);
+            notify({ type: "success", title: "Profile updated", description: "Your profile changes were saved." });
+        } catch {
+            notify({
+                type: "error",
+                title: "Connection issue",
+                description: "Could not save profile settings due to a network issue.",
+            });
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    const toggleNotification = async (key: keyof typeof defaultNotificationSettings, value: boolean) => {
+        const next = { ...notificationSettings, [key]: value };
+        setNotificationSettings(next);
+        try {
+            const response = await fetch("/api/settings/notifications", {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ notifications: next }),
+            });
+            if (!response.ok) {
+                throw new Error("failed");
+            }
+        } catch {
+            setNotificationSettings(notificationSettings);
+            notify({
+                type: "error",
+                title: "Update failed",
+                description: "Could not update notification settings.",
+            });
+        }
+    };
 
     const renderTab = () => {
         switch (activeTab) {
-            case "profile": return <ProfileTab />;
-            case "notifications": return <NotificationsTab />;
+            case "profile": return <ProfileTab profile={profile} draftName={profileDraftName} onDraftNameChange={setProfileDraftName} onSave={saveProfile} loading={loading || saving} />;
+            case "notifications": return <NotificationsTab settings={notificationSettings} onToggle={toggleNotification} loading={loading} />;
             case "billing": return <BillingTab />;
             case "security": return <SecurityTab />;
             default: return null;
@@ -287,7 +420,7 @@ export default function SettingsPage() {
 
     return (
         <div className="flex min-h-screen bg-background text-foreground">
-            <DashboardSidebar user={user} showSignOut={false} />
+            <DashboardSidebar user={sidebarUser} showSignOut={false} />
 
             <div className="flex-1 flex flex-col min-w-0">
                 {/* Topbar */}
@@ -309,8 +442,8 @@ export default function SettingsPage() {
                                     key={tab.id}
                                     onClick={() => setActiveTab(tab.id)}
                                     className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${activeTab === tab.id
-                                            ? "bg-primary/10 text-primary"
-                                            : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                                        ? "bg-primary/10 text-primary"
+                                        : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
                                         }`}
                                 >
                                     <tab.icon className="w-4 h-4 shrink-0" />

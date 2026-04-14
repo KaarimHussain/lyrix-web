@@ -6,6 +6,13 @@ export interface IUser extends Document {
   emailVerified: Date | null;
   image: string | null;
   password: string | null; // null for OAuth-only users
+  notificationPreferences: {
+    projectUpdates: boolean;
+    pluginReleases: boolean;
+    billing: boolean;
+    changelog: boolean;
+    marketing: boolean;
+  };
   createdAt: Date;
   updatedAt: Date;
 }
@@ -35,6 +42,13 @@ const UserSchema = new Schema<IUser>(
     password: {
       type: String,
       default: null,
+    },
+    notificationPreferences: {
+      projectUpdates: { type: Boolean, default: true },
+      pluginReleases: { type: Boolean, default: false },
+      billing: { type: Boolean, default: true },
+      changelog: { type: Boolean, default: true },
+      marketing: { type: Boolean, default: false },
     },
   },
   {
