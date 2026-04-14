@@ -69,10 +69,19 @@ type Project = {
 };
 
 type ActivityItem = {
+  id: string;
   action: string;
   target: string;
   project: string;
   time: string;
+};
+
+type ApiActivityItem = {
+  id: string;
+  action: string;
+  target: string;
+  project: string;
+  createdAt: string;
 };
 
 type DashboardUser = {
@@ -91,27 +100,6 @@ type NotificationItem = {
 };
 
 const PAGE_SIZE = 6;
-
-const recentActivity: ActivityItem[] = [
-  {
-    action: "Published page",
-    target: "Home",
-    project: "Personal Portfolio",
-    time: "2h ago",
-  },
-  {
-    action: "Added block",
-    target: "HeroBlock",
-    project: "Acme Corp Landing",
-    time: "5h ago",
-  },
-  {
-    action: "Created project",
-    target: "Nexus SaaS",
-    project: "Nexus SaaS",
-    time: "3d ago",
-  },
-];
 
 const notifications: NotificationItem[] = [
   {
@@ -332,6 +320,8 @@ export default function DashboardPage() {
   const [projectsError, setProjectsError] = useState<string | null>(null);
   const [pagination, setPagination] = useState({ page: 1, limit: PAGE_SIZE, total: 0, totalPages: 1 });
   const [stats, setStats] = useState({ totalProjects: 0, liveProjects: 0, totalBlocks: 0, totalPages: 0 });
+  const [recentActivity, setRecentActivity] = useState<ActivityItem[]>([]);
+  const [recentActivityLoading, setRecentActivityLoading] = useState(true);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const notificationMenuRef = useRef<HTMLDivElement | null>(null);
 
@@ -416,6 +406,38 @@ export default function DashboardPage() {
       setProjectsLoading(false);
     }
   }, [notify, currentPage, search]);
+
+  const fetchRecentActivity = useCallback(async () => {
+    setRecentActivityLoading(true);
+
+    try {
+      const response = await fetch("/api/activity/recent?limit=5", {
+        method: "GET",
+        cache: "no-store",
+      });
+
+      const payload = await response.json().catch(() => ({} as { activity?: ApiActivityItem[] }));
+
+      if (!response.ok) {
+        setRecentActivity([]);
+        return;
+      }
+
+      const mapped = (payload.activity || []).map((item) => ({
+        id: item.id,
+        action: item.action,
+        target: item.target,
+        project: item.project,
+        time: formatRelativeTime(item.createdAt),
+      }));
+
+      setRecentActivity(mapped);
+    } catch {
+      setRecentActivity([]);
+    } finally {
+      setRecentActivityLoading(false);
+    }
+  }, []);
 
   const handleDeleteProject = useCallback(
     async (project: Project) => {
@@ -525,6 +547,10 @@ export default function DashboardPage() {
   useEffect(() => {
     void fetchProjects(false);
   }, [fetchProjects]);
+
+  useEffect(() => {
+    void fetchRecentActivity();
+  }, [fetchRecentActivity]);
 
   const statsCards = [
     { label: "Total Projects", value: stats.totalProjects, icon: Layers },
@@ -776,20 +802,26 @@ export default function DashboardPage() {
                 </div>
 
                 <ol className="rounded-2xl border border-border bg-card overflow-hidden">
-                  {recentActivity.map((item, index) => (
-                    <li
-                      key={`${item.action}-${item.target}-${item.time}`}
-                      className={`p-4 flex flex-col gap-1 ${index < recentActivity.length - 1 ? "border-b border-border" : ""}`}
-                    >
-                      <div className="flex items-center justify-between gap-3">
-                        <p className="text-xs font-medium text-foreground">{item.action}</p>
-                        <time className="text-[10px] font-mono text-muted-foreground">{item.time}</time>
-                      </div>
-                      <p className="text-[11px] text-muted-foreground">
-                        <span className="font-mono text-primary">{item.target}</span> - {item.project}
-                      </p>
-                    </li>
-                  ))}
+                  {recentActivityLoading ? (
+                    <li className="p-4 text-xs text-muted-foreground">Loading activity...</li>
+                  ) : recentActivity.length === 0 ? (
+                    <li className="p-4 text-xs text-muted-foreground">No recent activity yet.</li>
+                  ) : (
+                    recentActivity.map((item, index) => (
+                      <li
+                        key={item.id}
+                        className={`p-4 flex flex-col gap-1 ${index < recentActivity.length - 1 ? "border-b border-border" : ""}`}
+                      >
+                        <div className="flex items-center justify-between gap-3">
+                          <p className="text-xs font-medium text-foreground">{item.action}</p>
+                          <time className="text-[10px] font-mono text-muted-foreground">{item.time}</time>
+                        </div>
+                        <p className="text-[11px] text-muted-foreground">
+                          <span className="font-mono text-primary">{item.target}</span> - {item.project}
+                        </p>
+                      </li>
+                    ))
+                  )}
                 </ol>
               </section>
 

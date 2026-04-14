@@ -77,7 +77,6 @@ export const metadata: Metadata = {
   category: "technology",
 };
 
-import NextAuthSessionProvider from "@/components/providers/session-provider";
 import { NotificationProvider } from "@/components/providers/notification-provider";
 
 export default function RootLayout({
@@ -127,9 +126,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
 
-        <NextAuthSessionProvider>
-          <NotificationProvider>{children}</NotificationProvider>
-        </NextAuthSessionProvider>
+        <NotificationProvider>{children}</NotificationProvider>
       </body>
     </html>
   );

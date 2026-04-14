@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import dbConnect from "@/lib/mongoose";
 import Project from "@/models/Project";
+import { RecentActivityService } from "@/lib/services/recent-activity.service";
 import mongoose from "mongoose";
 
 function slugify(value: string) {
@@ -167,6 +168,15 @@ export async function POST(request: Request) {
       blocksCount: 0,
       pagesCount: 0,
     });
+
+    try {
+      await RecentActivityService.logProjectCreated({
+        ownerId: session.user.id,
+        projectName: project.name,
+      });
+    } catch (activityError) {
+      console.warn("Failed to write recent activity for project creation:", activityError);
+    }
 
     return NextResponse.json({ project }, { status: 201 });
   } catch (error) {
