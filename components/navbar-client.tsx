@@ -10,7 +10,7 @@ import {
 } from "./ui/navigation-menu";
 import { Button } from "./ui/button";
 import Link from "next/link";
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { Box, X, Menu, LogOut, LayoutDashboard } from "lucide-react";
 import Image from "next/image";
@@ -18,6 +18,16 @@ import { signOut } from "next-auth/react";
 
 export default function NavbarClient({ isAuthenticated }: { isAuthenticated: boolean }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 10);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const NAV_FEATURE_IMAGES = [
     {
@@ -133,11 +143,18 @@ export default function NavbarClient({ isAuthenticated }: { isAuthenticated: boo
   );
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border bg-background/80 backdrop-blur-md">
+    <header
+      className={cn(
+        "fixed top-0 z-50 w-full transition-all duration-300",
+        isScrolled || isMobileMenuOpen
+          ? "border-b border-border bg-background/80 backdrop-blur-md"
+          : "border-b border-transparent bg-transparent"
+      )}
+    >
       <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
         <div className="flex items-center">
           <Link href="/">
-            <Logo height={60} width={60} text="Lyrix" textClassName="text-2xl font-bold" />
+            <Logo height={60} width={60} text="Lyrix" textClassName="text-2xl font-bold" showText={isScrolled || isMobileMenuOpen} />
           </Link>
         </div>
 
@@ -169,7 +186,7 @@ export default function NavbarClient({ isAuthenticated }: { isAuthenticated: boo
           ) : (
             <>
               <Link href="/login" passHref>
-                <Button variant="outline" size="sm" className="hidden sm:inline-flex h-8">Login</Button>
+                <Button variant="outline" size="sm" className="hidden sm:inline-flex h-8 bg-white">Login</Button>
               </Link>
               <Link href="/register" passHref>
                 <Button size="sm" className="hidden sm:inline-flex h-8">Register</Button>

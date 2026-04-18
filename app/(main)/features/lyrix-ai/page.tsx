@@ -6,9 +6,9 @@ import { Footer } from "@/components/blocks/Footer";
 
 export default function LyrixAIPage() {
   return (
-    <main className="flex min-h-screen flex-col bg-background text-foreground selection:bg-purple-500/20 selection:text-purple-700">
+    <main className="flex min-h-[50vh] flex-col bg-background text-foreground selection:bg-purple-500/20 selection:text-purple-700">
       {/* Hero Section */}
-      <section className="relative h-screen flex flex-col items-center justify-center overflow-hidden border-b border-border/50 pt-24 pb-16">
+      <section className="relative min-h-[70vh] flex flex-col items-center justify-center overflow-hidden border-b border-border/50 pb-16">
         <img
           src="https://cdn.echelonindustries.net/cdn/images/531f5dcdc71e7682_1776177915.png"
           alt=""
