@@ -22,7 +22,7 @@ export function Footer() {
                             { name: "Renderer", href: "/features/renderer", color: "from-green-500/0 via-green-500/50 to-green-500/0" },
                             { name: "Plugin Engine", href: "/features/plugin-engine", color: "from-orange-500/0 via-orange-500/50 to-orange-500/0" },
                             { name: "Team Sync", href: "/features/team-sync", color: "from-pink-500/0 via-pink-500/50 to-pink-500/0" },
-                            { name: "AI Automation", href: "/features/ai-automation", color: "from-red-500/0 via-red-500/50 to-red-500/0" },
+                            { name: "Studio", href: "/features/studio", color: "from-red-500/0 via-red-500/50 to-red-500/0" },
                         ].map((product, idx) => (
                             <Link
                                 key={idx}
