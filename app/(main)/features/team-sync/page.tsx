@@ -2,13 +2,24 @@ import React from "react";
 import { Users2, ArrowRight, History, MessageSquareShare, FileLock2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import Image from "next/image";
 import { Footer } from "@/components/blocks/Footer";
 
 export default function TeamSyncPage() {
   return (
-    <main className="flex min-h-screen flex-col bg-background text-foreground selection:bg-slate-700/70 selection:text-slate-50">
+    <main className="flex min-h-[50vh] flex-col bg-background text-foreground selection:bg-slate-500/20 selection:text-slate-700">
       {/* Hero Section */}
-      <section className="relative min-h-[40vh] flex flex-col items-center justify-center overflow-hidden border-b border-border/50 bg-gradient-to-b from-slate-800/40 via-slate-900/20 to-background pt-24 pb-16">
+      <section className="relative min-h-[70vh] flex flex-col items-center justify-center overflow-hidden border-b border-border/50 pb-16">
+        <Image
+          src="/svgs/Team-Sync-BG.svg"
+          alt=""
+          aria-hidden="true"
+          priority
+          width={1920}
+          height={1080}
+          className="absolute inset-0 h-full w-full object-cover object-center"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/35 via-background/25 to-background/55" />
         {/* Background glow effects */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-slate-600/20 rounded-full blur-[100px] pointer-events-none" />
         <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-slate-500/30 to-transparent" />
@@ -28,8 +39,11 @@ export default function TeamSyncPage() {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
-            <Button size="lg" className="bg-slate-700 hover:bg-slate-600 border border-slate-600 text-white rounded-xl h-12 px-8 font-semibold transition-all">
+            <Button size="lg" className="bg-slate-700 hover:bg-slate-600 border border-slate-600 text-white rounded-xl h-12 px-8 font-semibold transition-all w-full sm:w-auto">
               Invite Your Team <ArrowRight className="ml-2 w-4 h-4" />
+            </Button>
+            <Button size="lg" variant="outline" className="rounded-xl h-12 px-8 border-slate-500/30 hover:bg-slate-500/10">
+              View Documentation
             </Button>
           </div>
         </div>

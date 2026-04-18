@@ -2,13 +2,24 @@ import React from "react";
 import { MousePointer2, ArrowRight, LayoutTemplate, Layers, Move } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import Image from "next/image";
 import { Footer } from "@/components/blocks/Footer";
 
 export default function VisualEditorPage() {
   return (
-    <main className="flex min-h-screen flex-col bg-background text-foreground selection:bg-blue-700/50 selection:text-blue-700">
+    <main className="flex min-h-[50vh] flex-col bg-background text-foreground selection:bg-blue-500/20 selection:text-blue-700">
       {/* Hero Section */}
-      <section className="relative min-h-[40vh] flex flex-col items-center justify-center overflow-hidden border-b border-border/50 bg-gradient-to-b from-blue-900/40 via-blue-950/20 to-background pt-24 pb-16">
+      <section className="relative min-h-[70vh] flex flex-col items-center justify-center overflow-hidden border-b border-border/50 pb-16">
+        <Image
+          src="/svgs/Visual-Editor-BG.svg"
+          alt=""
+          aria-hidden="true"
+          priority
+          width={1920}
+          height={1080}
+          className="absolute inset-0 h-full w-full object-cover object-center"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-blue-950/35 via-background/25 to-background/55" />
         {/* Background glow effects */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-blue-600/20 rounded-full blur-[100px] pointer-events-none" />
         <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-blue-500/30 to-transparent" />
@@ -24,12 +35,15 @@ export default function VisualEditorPage() {
           </h1>
 
           <p className="text-lg md:text-xl max-w-[700px] mx-auto mb-8 font-light">
-            Compose pages visually without losing control over the code. Lyrix's Visual Editor bridges the gap between developers and content creators.
+            Compose pages visually without losing control over the code. Lyrix&apos;s Visual Editor bridges the gap between developers and content creators.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
-            <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-white rounded-xl h-12 px-8 font-semibold transition-all">
+            <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-white rounded-xl h-12 px-8 font-semibold transition-all w-full sm:w-auto">
               Try the Editor <ArrowRight className="ml-2 w-4 h-4" />
+            </Button>
+            <Button size="lg" variant="outline" className="rounded-xl h-12 px-8 border-blue-500/30 hover:bg-blue-500/10">
+              View Documentation
             </Button>
           </div>
         </div>

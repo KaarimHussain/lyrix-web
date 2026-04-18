@@ -2,13 +2,24 @@ import React from "react";
 import { Blocks, ArrowRight, Puzzle, Wrench, PackagePlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import Image from "next/image";
 import { Footer } from "@/components/blocks/Footer";
 
 export default function PluginEnginePage() {
   return (
-    <main className="flex min-h-screen flex-col bg-background text-foreground selection:bg-amber-700/70 selection:text-amber-50">
+    <main className="flex min-h-[50vh] flex-col bg-background text-foreground selection:bg-amber-500/20 selection:text-amber-700">
       {/* Hero Section */}
-      <section className="relative min-h-[40vh] flex flex-col items-center justify-center overflow-hidden border-b border-border/50 bg-gradient-to-b from-amber-900/40 via-amber-950/20 to-background pt-24 pb-16">
+      <section className="relative min-h-[70vh] flex flex-col items-center justify-center overflow-hidden border-b border-border/50 pb-16">
+        <Image
+          src="/svgs/Plugin-Engine-BG.svg"
+          alt=""
+          aria-hidden="true"
+          priority
+          width={1920}
+          height={1080}
+          className="absolute inset-0 h-full w-full object-cover object-center"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-amber-950/35 via-background/25 to-background/55" />
         {/* Background glow effects */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-amber-600/20 rounded-full blur-[100px] pointer-events-none" />
         <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-amber-600/30 to-transparent" />
@@ -24,12 +35,15 @@ export default function PluginEnginePage() {
           </h1>
 
           <p className="text-lg md:text-xl max-w-[700px] mx-auto mb-8 font-light">
-            Don't fight restrictive APIs. In Lyrix, creating a plugin to modify behavior or add new editing capabilities is as simple as writing a TypeScript function.
+            Don&apos;t fight restrictive APIs. In Lyrix, creating a plugin to modify behavior or add new editing capabilities is as simple as writing a TypeScript function.
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
-            <Button size="lg" className="bg-amber-600 hover:bg-amber-700 text-white rounded-xl h-12 px-8 font-semibold transition-all">
+            <Button size="lg" className="bg-amber-600 hover:bg-amber-700 text-white rounded-xl h-12 px-8 font-semibold transition-all w-full sm:w-auto">
               Explore Plugins <ArrowRight className="ml-2 w-4 h-4" />
+            </Button>
+            <Button size="lg" variant="outline" className="rounded-xl h-12 px-8 border-amber-500/30 hover:bg-amber-500/10">
+              View Documentation
             </Button>
           </div>
         </div>

@@ -2,25 +2,36 @@ import React from "react";
 import { Zap, ArrowRight, Gauge, Cpu, Network } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import Image from "next/image";
 import { Footer } from "@/components/blocks/Footer";
 
 export default function RendererPage() {
   return (
-    <main className="flex min-h-screen flex-col bg-background text-foreground selection:bg-green-700/70 selection:text-green-50">
+    <main className="flex min-h-[50vh] flex-col bg-background text-foreground selection:bg-emerald-500/20 selection:text-emerald-700">
       {/* Hero Section */}
-      <section className="relative min-h-[40vh] flex flex-col items-center justify-center overflow-hidden border-b border-border/50 bg-gradient-to-b from-green-900/40 via-green-950/20 to-background pt-24 pb-16">
+      <section className="relative min-h-[70vh] flex flex-col items-center justify-center overflow-hidden border-b border-border/50 pb-16">
+        <Image
+          src="/svgs/Renderer-BG.svg"
+          alt=""
+          aria-hidden="true"
+          priority
+          width={1920}
+          height={1080}
+          className="absolute inset-0 h-full w-full object-cover object-center"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-emerald-950/35 via-background/25 to-background/55" />
         {/* Background glow effects */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-green-600/20 rounded-full blur-[100px] pointer-events-none" />
-        <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-green-500/30 to-transparent" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-emerald-600/20 rounded-full blur-[100px] pointer-events-none" />
+        <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-emerald-500/30 to-transparent" />
 
         <div className="container px-4 md:px-6 relative z-10 flex flex-col items-center text-center">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-500/10 text-green-700 text-sm font-medium mb-6 border border-green-700/50 backdrop-blur-sm">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-700 text-sm font-medium mb-6 border border-emerald-700/50 backdrop-blur-sm">
             <Zap className="w-4 h-4" />
             <span>High-Performance Delivery</span>
           </div>
 
           <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold tracking-tight mb-6 bg-clip-text text-transparent bg-gradient-to-b from-white to-white/60">
-            Native <span className="text-green-700">Renderer</span>
+            Native <span className="text-emerald-700">Renderer</span>
           </h1>
 
           <p className="text-lg md:text-xl max-w-[700px] mx-auto mb-8 font-light">
@@ -28,8 +39,11 @@ export default function RendererPage() {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
-            <Button size="lg" className="bg-green-600 hover:bg-green-700 text-white rounded-xl h-12 px-8 font-semibold transition-all">
+            <Button size="lg" className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl h-12 px-8 font-semibold transition-all w-full sm:w-auto">
               See Benchmarks <ArrowRight className="ml-2 w-4 h-4" />
+            </Button>
+            <Button size="lg" variant="outline" className="rounded-xl h-12 px-8 border-emerald-500/30 hover:bg-emerald-500/10">
+              View Documentation
             </Button>
           </div>
         </div>

@@ -61,10 +61,10 @@ export default function NavbarClient({ isAuthenticated }: { isAuthenticated: boo
       href: "/features/team-sync",
     },
     {
-      imgSrc: "https://cdn.echelonindustries.net/cdn/images/0fdfa7f52c7354b4_1775522493.png",
-      alt: "AI Automation",
-      description: "Next-gen workflows.",
-      href: "/features/ai-automation",
+      imgSrc: "https://cdn.echelonindustries.net/cdn/images/7f9faa9e691885eb_1776537908.png",
+      alt: "Studio",
+      description: "Deep infra tools for scale.",
+      href: "/features/studio",
     },
   ];
 
