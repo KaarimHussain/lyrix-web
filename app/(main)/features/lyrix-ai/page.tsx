@@ -2,14 +2,20 @@ import React from "react";
 import { Sparkles, ArrowRight, Zap, Brain, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import Navbar from "@/components/navbar";
 import { Footer } from "@/components/blocks/Footer";
 
 export default function LyrixAIPage() {
   return (
     <main className="flex min-h-screen flex-col bg-background text-foreground selection:bg-purple-500/20 selection:text-purple-700">
       {/* Hero Section */}
-      <section className="relative min-h-[40vh] flex flex-col items-center justify-center overflow-hidden border-b border-border/50 bg-gradient-to-b from-purple-900/40 via-purple-950/20 to-background pt-24 pb-16">
+      <section className="relative h-screen flex flex-col items-center justify-center overflow-hidden border-b border-border/50 pt-24 pb-16">
+        <img
+          src="https://cdn.echelonindustries.net/cdn/images/531f5dcdc71e7682_1776177915.png"
+          alt=""
+          aria-hidden="true"
+          className="absolute inset-0 h-full w-full object-cover object-center"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-purple-950/35 via-background/25 to-background/55" />
         {/* Background glow effects */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-purple-600/20 rounded-full blur-[100px] pointer-events-none" />
         <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-purple-500/30 to-transparent" />

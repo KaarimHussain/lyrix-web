@@ -197,11 +197,10 @@ function ProjectCard({
 
         <div className="flex items-center gap-2">
           <span
-            className={`rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest font-mono ${
-              project.status === "live"
+            className={`rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest font-mono ${project.status === "live"
                 ? "border-primary/20 bg-primary/10 text-primary"
                 : "border-border bg-muted text-muted-foreground"
-            }`}
+              }`}
           >
             {project.status}
           </span>
@@ -331,10 +330,10 @@ export default function DashboardPage() {
     plan: "Community",
     avatar: session?.user?.name
       ? session.user.name
-          .split(" ")
-          .map((namePart: string) => namePart[0])
-          .join("")
-          .toUpperCase()
+        .split(" ")
+        .map((namePart: string) => namePart[0])
+        .join("")
+        .toUpperCase()
       : "U",
   };
 
@@ -423,7 +422,7 @@ export default function DashboardPage() {
         return;
       }
 
-      const mapped = (payload.activity || []).map((item) => ({
+      const mapped = (payload.activity || []).map((item: any) => ({
         id: item.id,
         action: item.action,
         target: item.target,
