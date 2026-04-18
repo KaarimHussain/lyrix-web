@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Sparkles,
   Send,
@@ -11,15 +11,44 @@ import {
   PenTool,
   Plus,
   ArrowRight,
-  MessageSquare
+  MessageSquare,
+  Loader2
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
-import Link from "next/link";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { useNotification } from "@/components/providers/notification-provider"
 
 export default function LyrixAIChatPage() {
+  const { data: session, status } = useSession();
+  const router = useRouter();
   const [input, setInput] = useState("");
+  const toast = useNotification();
+
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return "Good morning";
+    if (hour < 17) return "Good afternoon";
+    return "Good evening";
+  };
+
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      // send an toast message before redirection
+      toast.notify({ title: "Please login to access this feature", type: "info" });
+      router.push("/login");
+    }
+  }, [status, router]);
+
+  if (status === "loading" || status === "unauthenticated") {
+    return (
+      <div className="flex h-screen items-center justify-center bg-background">
+        <Loader2 className="w-8 h-8 animate-spin text-purple-600" />
+      </div>
+    );
+  }
 
   const suggestedFeatures = [
     {
@@ -63,11 +92,8 @@ export default function LyrixAIChatPage() {
           <div className="max-w-3xl mx-auto flex flex-col items-center">
             {/* Centered Welcome Content */}
             <div className="text-center mb-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-purple-600/10 border border-purple-500/20 mb-6 group hover:scale-110 transition-transform">
-                <Sparkles className="w-8 h-8 text-purple-500" />
-              </div>
               <h1 className="text-3xl md:text-5xl font-bold tracking-tight mb-4 bg-clip-text text-transparent bg-gradient-to-b from-foreground to-foreground/60">
-                Good evening, User.
+                {getGreeting()}, {session?.user?.name?.split(" ")[0] || "User"}.
               </h1>
               <p className="text-xl text-muted-foreground font-light max-w-lg mx-auto">
                 How can I help you create or collaborate today?
@@ -106,7 +132,7 @@ export default function LyrixAIChatPage() {
             <div className="relative rounded-3xl border border-border bg-card/50 shadow-sm transition-all focus-within:border-purple-500/50 focus-within:ring-4 focus-within:ring-purple-500/5">
               <Textarea
                 placeholder="Message Lyrix AI..."
-                className="w-full min-h-[140px] resize-none border-none bg-transparent py-4 px-5 pr-12 focus-visible:ring-0 text-base leading-relaxed"
+                className="w-full min-h-[90px] resize-none border-none bg-transparent py-4 px-5 pr-12 focus-visible:ring-0 text-base leading-relaxed"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
               />
@@ -148,39 +174,6 @@ export default function LyrixAIChatPage() {
           </div>
         </div>
       </main>
-
-      {/* Sidebar (Optional brand presence) */}
-      <aside className="w-72 border-l border-border/50 bg-card hidden xl:flex flex-col p-6">
-        <div className="flex items-center gap-3 mb-10">
-          <div className="w-8 h-8 rounded-lg bg-purple-600 flex items-center justify-center">
-            <Sparkles className="w-5 h-5 text-white" />
-          </div>
-          <span className="font-bold text-lg tracking-tight">Lyrix AI</span>
-        </div>
-
-        <nav className="flex-1 flex flex-col gap-2">
-          <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2 px-3">Recent Chats</p>
-          <div className="space-y-1">
-            <button className="w-full flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-foreground hover:bg-purple-500/5 rounded-xl transition-colors group">
-              <MessageSquare className="w-4 h-4 text-muted-foreground group-hover:text-purple-400" />
-              <span className="truncate">Product Vision 2026</span>
-            </button>
-            <button className="w-full flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-foreground hover:bg-purple-500/5 rounded-xl transition-colors group">
-              <MessageSquare className="w-4 h-4 text-muted-foreground group-hover:text-purple-400" />
-              <span className="truncate">Landing Page Draft</span>
-            </button>
-          </div>
-        </nav>
-
-        <div className="pt-6 border-t border-border">
-          <Link href="/features/lyrix-ai">
-            <Button variant="ghost" className="w-full justify-start gap-3 h-11 rounded-xl text-muted-foreground hover:text-foreground">
-              <ArrowRight className="w-4 h-4 rotate-180" />
-              Exit Assistant
-            </Button>
-          </Link>
-        </div>
-      </aside>
     </div>
   );
 }

@@ -45,7 +45,7 @@ export default function StudioPage() {
                         The <span className="text-rose-600">Studio</span>
                     </h1>
 
-                    <p className="text-lg md:text-xl max-w-[800px] mx-auto mb-8 font-light text-muted-foreground leading-relaxed">
+                    <p className="text-lg md:text-xl max-w-[800px] mx-auto mb-8 font-light text-black leading-relaxed">
                         Deep tools for serious projects. Visualize your content graph, manage schema migrations, inspect block dependencies, and keep large-scale Lyrix projects healthy at every layer.
                     </p>
 

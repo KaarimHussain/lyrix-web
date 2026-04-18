@@ -153,7 +153,7 @@ export default function NavbarClient({ isAuthenticated }: { isAuthenticated: boo
     >
       <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
         <div className="flex items-center">
-          <Link href="/">
+          <Link href="/" onClick={() => setIsMobileMenuOpen(false)}>
             <Logo height={60} width={60} text="Lyrix" textClassName="text-2xl font-bold" showText={isScrolled || isMobileMenuOpen} />
           </Link>
         </div>
@@ -202,8 +202,6 @@ export default function NavbarClient({ isAuthenticated }: { isAuthenticated: boo
           </button>
         </div>
       </div>
-
-      {/* Mobile Menu */}
       <div
         className={cn(
           "fixed inset-0 top-16 z-40 grid h-[calc(100vh-4rem)] grid-flow-row auto-rows-max overflow-auto p-6 pb-32 shadow-md animate-in slide-in-from-bottom-8 md:hidden bg-background",
@@ -214,15 +212,15 @@ export default function NavbarClient({ isAuthenticated }: { isAuthenticated: boo
           <div className="grid gap-4">
             <h4 className="font-medium leading-none text-foreground">Features</h4>            <div className="grid gap-2 pl-4 border-l border-border">
               {NAV_FEATURE_IMAGES.map((feature) => (
-                <MobileLink key={feature.href} href={feature.href} icon={feature.imgSrc}> {feature.alt} </MobileLink>
+                <MobileLink key={feature.href} href={feature.href} icon={feature.imgSrc} onClick={() => setIsMobileMenuOpen(false)}> {feature.alt} </MobileLink>
               ))}
             </div>
           </div>
 
           <div className="mt-4 flex flex-col gap-3 border-t border-border pt-6">
-            <Link href="/plugins" className="text-sm font-medium text-muted-foreground hover:text-foreground">Plugins</Link>
-            <Link href="/docs" className="text-sm font-medium text-muted-foreground hover:text-foreground">Docs</Link>
-            <Link href="/pricing" className="text-sm font-medium text-muted-foreground hover:text-foreground">Pricing</Link>
+            <Link href="/plugins" onClick={() => setIsMobileMenuOpen(false)} className="text-sm font-medium text-muted-foreground hover:text-foreground">Plugins</Link>
+            <Link href="/docs" onClick={() => setIsMobileMenuOpen(false)} className="text-sm font-medium text-muted-foreground hover:text-foreground">Docs</Link>
+            <Link href="/pricing" onClick={() => setIsMobileMenuOpen(false)} className="text-sm font-medium text-muted-foreground hover:text-foreground">Pricing</Link>
             {isAuthenticated ? (
               <>
                 <Link
@@ -304,8 +302,8 @@ const NavItemImage = ({ src, alt }: { src: string; alt: string }) => {
   );
 };
 
-const MobileLink = ({ href, children, icon }: { href: string; children: React.ReactNode; icon?: string }) => (
-  <Link href={href} className="flex items-center gap-3 text-sm text-muted-foreground hover:text-foreground py-2 transition-colors">
+const MobileLink = ({ href, children, icon, onClick }: { href: string; children: React.ReactNode; icon?: string; onClick?: () => void }) => (
+  <Link href={href} onClick={onClick} className="flex items-center gap-3 text-sm text-muted-foreground hover:text-foreground py-2 transition-colors">
     {icon && (
       <div className="w-8 h-8 relative rounded-md border border-border/50 overflow-hidden shrink-0 bg-muted/30">
         <NavItemImage src={icon} alt={String(children)} />
